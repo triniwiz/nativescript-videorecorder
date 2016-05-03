@@ -1,0 +1,14 @@
+<Page xmlns="http://schemas.nativescript.org/tns.xsd"
+      xmlns:VideoPlayer="nativescript-videoplayer" loaded="loaded">
+        <StackLayout>
+            <VideoPlayer:Video
+            src="{{selectedVideo}}"
+            loaded="videoplayerLoaded" 
+            finished="videoFinished" 
+            autoplay="true" 
+            height="300" />
+
+<Label text="{{selectedVideo}}"/>
+           <Button text="Record Video" tap="recordVideo"/>
+        </StackLayout>
+</Page>
