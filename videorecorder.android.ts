@@ -23,13 +23,15 @@ export class VideoRecorder extends common.VideoRecorder {
     record(options: any): Promise<any> {
 
         return new Promise((resolve, reject) => {
-            let tempVideoPath = fs.path.join(utils.ad.getApplicationContext().getExternalFilesDir(null).getAbsolutePath(), "videoCapture_" + +new Date() + ".mp4");
+
+
+            //let tempVideoPath = fs.path.join(utils.ad.getApplicationContext().getExternalFilesDir(null).getAbsolutePath(), "videoCapture_" + +new Date() + ".mp4");
             options = options || {}
             let data = null
-            let file = new java.io.File(tempVideoPath);
+            let file;
             options.size = options.size || 0;
             options.hd = options.hd ? 1 : 0;
-            options.saveFile = options.saveFile || false;
+            options.saveToGallery = options.saveToGallery || false;
             options.duration = options.duration || 0;
             options.explanation = options.explanation = "";
 
@@ -45,7 +47,13 @@ export class VideoRecorder extends common.VideoRecorder {
                 if (options.size > 0) {
                     intent.putExtra(android.provider.MediaStore.EXTRA_SIZE_LIMIT, options.sizeLimit * 1024 * 1024);
                 }
-                if (!options.saveFile) {
+                if (!options.saveToGallery) {
+                    file = new java.io.File(app.android.context.getFilesDir(), "videoCapture_" + +new Date() + ".mp4");
+                    intent.putExtra(android.provider.MediaStore.EXTRA_OUTPUT, android.net.Uri.fromFile(file))
+                } else {
+                    file = new java.io.File(android.os.Environment.getExternalStoragePublicDirectory(
+                        android.os.Environment.DIRECTORY_MOVIES).getAbsolutePath() + "/" + "videoCapture_" + +new Date() + ".mp4");
+
                     intent.putExtra(android.provider.MediaStore.EXTRA_OUTPUT, android.net.Uri.fromFile(file))
                 }
                 if (options.duration > 0) {
@@ -59,12 +67,9 @@ export class VideoRecorder extends common.VideoRecorder {
 
                         if (args.requestCode === REQUEST_VIDEO_CAPTURE && args.resultCode === RESULT_OK) {
 
-                            if (options.saveFile) {
-                                file = this.getPath(args.intent.getData());
-                                resolve({ file: file });
-
+                            if (options.saveToGallery) {
+                                resolve({ file: file.toString() });
                             } else {
-
                                 resolve({ file: file.toString() });
                             }
 

@@ -13,7 +13,7 @@ export function loaded(args: pages.NavigatedData) {
 
 
 export function recordVideo() {
-    page.bindingContext.recorder({ saveFile: true })
+    page.bindingContext.recorder({ saveToGallery: false })
         .then((data) => {
             page.bindingContext.set("selectedVideo", fs.path.join(fs.knownFolders.documents().path, data.file));
         })

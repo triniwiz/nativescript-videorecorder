@@ -11,7 +11,7 @@
 var vr = require("nativescript-videorecorder");
 var videorecorder = new vr.VideoRecorder();
 var options = {
-    saveFile:true, //default false | optional
+    saveToGallery:true, //default false | optional
     duration:30, //(seconds) default no limit | optional
     size:10, //(MB) default none | optional
     hd:true, //default  false low res | optional
