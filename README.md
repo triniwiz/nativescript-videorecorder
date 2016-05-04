@@ -17,7 +17,7 @@ var options = {
     duration:30, //(seconds) default no limit | optional
     size:10, //(MB) default none | optional
     hd:true, //default  false low res | optional
-    explaination:"Why do i need this permission" //optional on api 23
+    explanation:"Why do i need this permission" //optional on api 23
 }
 videorecorder.record(options)
 .then((data)=>{
