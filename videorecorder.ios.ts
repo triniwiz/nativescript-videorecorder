@@ -14,7 +14,7 @@ export class VideoRecorder extends common.VideoRecorder {
     record(options: any): Promise<any> {
 		return new Promise((resolve, reject) => {
 		listener = null;
-		var imagePickerController = new UIVideoEditorController();
+		var videoEditorController = new UIVideoEditorController();
 		var saveToGallery = true;
 		var quality = 0;
 		var duration = 0.0;
@@ -30,17 +30,17 @@ export class VideoRecorder extends common.VideoRecorder {
 		else {
 		    listener = UIVideoEditorControllerDelegateImpl.new().initWithCallback(resolve);
 		}
-		imagePickerController.delegate = listener;
+		videoEditorController.delegate = listener;
 
 		var sourceType = UIImagePickerControllerSourceType.UIImagePickerControllerSourceTypeCamera;
 		var mediaTypes = UIVideoEditorController.availableMediaTypesForSourceType(sourceType);
 
 		if (mediaTypes) {
-		    imagePickerController.mediaTypes = mediaTypes;
-		    imagePickerController.sourceType = sourceType;
+		    videoEditorController.mediaTypes = mediaTypes;
+		    videoEditorController.sourceType = sourceType;
 		}
 
-		imagePickerController.modalPresentationStyle = UIModalPresentationStyle.UIModalPresentationCurrentContext;
+		videoEditorController.modalPresentationStyle = UIModalPresentationStyle.UIModalPresentationCurrentContext;
 
 		var frame: typeof frameModule = require("ui/frame");
 
@@ -48,7 +48,7 @@ export class VideoRecorder extends common.VideoRecorder {
 		if (topMostFrame) {
 		    var viewController: UIViewController = topMostFrame.currentPage && topMostFrame.currentPage.ios;
 		    if (viewController) {
-		        viewController.presentViewControllerAnimatedCompletion(imagePickerController, true, null);
+		        viewController.presentViewControllerAnimatedCompletion(videoEditorController, true, null);
 		    }
 		}
 	}
@@ -82,11 +82,9 @@ class UIVideoEditorControllerDelegateImpl extends NSObject implements UIVideoEdi
         return this;
     }
 
-    didSaveEditedVideoToPath(picker, info): void {
-        if (info) {
-            var source = info.valueForKey(UIImagePickerControllerOriginalImage);
-            if (source) {
-                var moviePath = this.videoPath;
+    didSaveEditedVideoToPath(editedVideoPath): void {
+        if (editedVideoPath) {
+                var moviePath = editedVideoPath;
 	
                 if (this._callback) {
 		    if(this._saveToGallery) {
@@ -94,16 +92,15 @@ class UIVideoEditorControllerDelegateImpl extends NSObject implements UIVideoEdi
 				UISaveVideoAtPathToSavedPhotosAlbum(moviePath, null, null, null);
 			}
 		    }
-                    this._callback({ file: source });
+                    this._callback({ filePath: editedVideoPath });
                 }
-            }
         }
-        picker.presentingViewController.dismissViewControllerAnimatedCompletion(true, null);
+        picker.presentingViewController.dismissViewControllerAnimated(true, null);
         listener = null;
     }
 
     videoEditorControllerDidCancel(picker): void {
-        picker.presentingViewController.dismissViewControllerAnimatedCompletion(true, null);
+        picker.presentingViewController.dismissViewControllerAnimated(true, null);
         listener = null;
     }
 }
