@@ -94,12 +94,12 @@ class UIVideoEditorControllerDelegateImpl extends NSObject implements UIVideoEdi
                     this._callback({ filePath: editedVideoPath });
                 }
         }
-        picker.presentingViewController.dismissViewControllerAnimated(true, null);
+        picker.presentingViewController.dismissViewControllerAnimatedCompletion(true, null);
         listener = null;
     }
 
     videoEditorControllerDidCancel(picker): void {
-        picker.presentingViewController.dismissViewControllerAnimated(true, null);
+        picker.presentingViewController.dismissViewControllerAnimatedCompletion(true, null);
         listener = null;
     }
 }
