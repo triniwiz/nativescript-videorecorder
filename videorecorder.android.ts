@@ -21,9 +21,7 @@ export class VideoRecorder extends common.VideoRecorder {
     }
 
     record(options: any): Promise<any> {
-
         return new Promise((resolve, reject) => {
-
 
             //let tempVideoPath = fs.path.join(utils.ad.getApplicationContext().getExternalFilesDir(null).getAbsolutePath(), "videoCapture_" + +new Date() + ".mp4");
             options = options || {}
@@ -34,9 +32,6 @@ export class VideoRecorder extends common.VideoRecorder {
             options.saveToGallery = options.saveToGallery || false;
             options.duration = options.duration || 0;
             options.explanation = options.explanation = "";
-
-
-
 
             let startRecording = () => {
                 let intent = new android.content.Intent(android.provider.MediaStore.ACTION_VIDEO_CAPTURE);
@@ -105,26 +100,11 @@ export class VideoRecorder extends common.VideoRecorder {
                             reject({ event: 'camera permission needed' })
                         });
                 }
-
-
             }
             else {
                 startRecording()
             }
-
-
         })
 
     }
-
-    getPath(uri) {
-        let cursor = app.android.currentContext.getContentResolver().query(uri, null, null, null, null);
-        if (cursor == null) return null;
-        let column_index = cursor.getColumnIndexOrThrow(android.provider.MediaStore.MediaColumns.DATA);
-        cursor.moveToFirst();
-        let s = cursor.getString(column_index);
-        cursor.close();
-        return s;
-    }
-
 }
