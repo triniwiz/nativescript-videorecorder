@@ -1,6 +1,5 @@
 import common = require('./videorecorder.common');
 import types = require("utils/types");
-import * as cameraCommonModule from "./camera-common";
 import * as imageSourceModule from "image-source";
 import * as frameModule from "ui/frame";
 
