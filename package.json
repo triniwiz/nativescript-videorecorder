@@ -1,11 +1,12 @@
 {
 	"name": "nativescript-videorecorder",
-	"version": "1.1.0",
+	"version": "1.2.0",
 	"description": "NativeScript videorecording plugin",
 	"main": "videorecorder.js",
 	"nativescript": {
 		"platforms": {
-			"android": "2.0.0"
+			"android": "2.0.0",
+			"ios": "2.0.0"
 		}
 	},
 	"scripts": {
@@ -22,8 +23,15 @@
 	"keywords": [
 		"NativeScript",
 		"JavaScript",
-		"Android"
+		"Android",
+		"IOS"
 	],
+	"contributors": [
+    {
+      "name": "Victor Sosa",
+      "url": "https://github.com/victorsosa"
+    }
+  ],
 	"author": {
 		"name": "Osei Fortune",
 		"email": "fortune.osei@yahoo.com"
