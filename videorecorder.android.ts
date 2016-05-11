@@ -1,5 +1,5 @@
 import common = require('./videorecorder.common');
-import permissions = require('./nativescript-permissions/permissions')
+import permissions = require('nativescript-permissions');
 import app = require('application');
 const RESULT_CANCELED = 0;
 const RESULT_OK = -1;

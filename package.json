@@ -9,6 +9,7 @@
 			"ios": "2.0.0"
 		}
 	},
+	"dependencies": { "nativescript-permissions": "latest" },
 	"scripts": {
 		"build": "tsc",
 		"demo.ios": "npm run preparedemo ; cd demo ; tns emulate ios",
