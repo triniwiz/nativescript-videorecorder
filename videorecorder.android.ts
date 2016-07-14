@@ -1,4 +1,3 @@
-import common = require('./videorecorder.common');
 import permissions = require('nativescript-permissions');
 import app = require('application');
 const RESULT_CANCELED = 0;
@@ -15,16 +14,13 @@ import utils = require("utils/utils");
 
 const currentapiVersion = android.os.Build.VERSION.SDK_INT;
 
-export class VideoRecorder extends common.VideoRecorder {
-    constructor() {
-        super();
-    }
+export class VideoRecorder {
+    constructor() {}
 
     record(options: any): Promise<any> {
         return new Promise((resolve, reject) => {
 
-            //let tempVideoPath = fs.path.join(utils.ad.getApplicationContext().getExternalFilesDir(null).getAbsolutePath(), "videoCapture_" + +new Date() + ".mp4");
-            options = options || {}
+           options = options || {}
             let data = null
             let file;
             options.size = options.size || 0;

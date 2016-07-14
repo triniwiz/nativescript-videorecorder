@@ -7,7 +7,6 @@ export class HelloWorldModel extends Observable {
   constructor() {
     super();
     this.set("selectedVideo","")
-
 }
   recorder(options) {
     var vr = new VideoRecorder();
