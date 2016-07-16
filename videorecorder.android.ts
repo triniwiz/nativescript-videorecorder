@@ -8,10 +8,8 @@ const ORIENTATION_UNKNOWN = -1;
 const PERMISSION_DENIED = -1;
 const PERMISSION_GRANTED = 0;
 const MARSHMALLOW = 23;
-const packageName = app.android.context.getPackageName();
 import fs = require("file-system");
 import utils = require("utils/utils");
-
 const currentapiVersion = android.os.Build.VERSION.SDK_INT;
 
 export class VideoRecorder {
