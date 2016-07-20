@@ -29,12 +29,10 @@ export class VideoRecorder {
 
             let startRecording = () => {
                 let intent = new android.content.Intent(android.provider.MediaStore.ACTION_VIDEO_CAPTURE);
-
-                if (options.hd === 1) {
-                    intent.putExtra(android.provider.MediaStore.EXTRA_VIDEO_QUALITY, 1);
-                }
+                intent.putExtra(android.provider.MediaStore.EXTRA_VIDEO_QUALITY, options.hd);
+                
                 if (options.size > 0) {
-                    intent.putExtra(android.provider.MediaStore.EXTRA_SIZE_LIMIT, options.sizeLimit * 1024 * 1024);
+                    intent.putExtra(android.provider.MediaStore.EXTRA_SIZE_LIMIT, options.size * 1024 * 1024);
                 }
                 if (!options.saveToGallery) {
                     file = new java.io.File(app.android.context.getFilesDir(), "videoCapture_" + +new Date() + ".mp4");
