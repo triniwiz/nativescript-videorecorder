@@ -46,7 +46,7 @@ export class VideoRecorder {
                     intent.putExtra(android.provider.MediaStore.EXTRA_OUTPUT, android.net.Uri.fromFile(file))
                 }
                 if (options.duration > 0) {
-                    intent.putExtra(android.provider.MediaStore.EXTRA_DURATION_LIMIT, options.durationLimit);
+                    intent.putExtra(android.provider.MediaStore.EXTRA_DURATION_LIMIT, options.duration);
                 }
 
                 if (intent.resolveActivity(app.android.currentContext.getPackageManager()) != null) {
