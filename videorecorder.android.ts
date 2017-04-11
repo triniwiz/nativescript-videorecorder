@@ -1,5 +1,5 @@
-import permissions = require('nativescript-permissions');
-import app = require('application');
+import * as permissions from 'nativescript-permissions';
+import * as app from 'application';
 const RESULT_CANCELED = 0;
 const RESULT_OK = -1;
 const REQUEST_VIDEO_CAPTURE = 999;
@@ -8,17 +8,17 @@ const ORIENTATION_UNKNOWN = -1;
 const PERMISSION_DENIED = -1;
 const PERMISSION_GRANTED = 0;
 const MARSHMALLOW = 23;
-import fs = require("file-system");
-import utils = require("utils/utils");
+import * as fs from "file-system";
+import * as utils from "utils/utils";
 const currentapiVersion = android.os.Build.VERSION.SDK_INT;
 
 export class VideoRecorder {
-    constructor() {}
+    constructor() { }
 
-    record(options: any): Promise<any> {
+    record(options?: any): Promise<any> {
         return new Promise((resolve, reject) => {
 
-           options = options || {}
+            options = options || {}
             let data = null
             let file;
             options.size = options.size || 0;
@@ -28,20 +28,25 @@ export class VideoRecorder {
             options.explanation = options.explanation = "";
 
             let startRecording = () => {
+
                 let intent = new android.content.Intent(android.provider.MediaStore.ACTION_VIDEO_CAPTURE);
                 intent.putExtra(android.provider.MediaStore.EXTRA_VIDEO_QUALITY, options.hd);
-                
+
                 if (options.size > 0) {
                     intent.putExtra(android.provider.MediaStore.EXTRA_SIZE_LIMIT, options.size * 1024 * 1024);
                 }
                 if (!options.saveToGallery) {
-                    file = new java.io.File(app.android.context.getFilesDir(), "videoCapture_" + +new Date() + ".mp4");
-                    intent.putExtra(android.provider.MediaStore.EXTRA_OUTPUT, android.net.Uri.fromFile(file))
-                } else {
-                    file = new java.io.File(android.os.Environment.getExternalStoragePublicDirectory(
-                        android.os.Environment.DIRECTORY_MOVIES).getAbsolutePath() + "/" + "videoCapture_" + +new Date() + ".mp4");
+                    let fileName = `videoCapture_${+new Date()}.mp4`;
+                    let path = fs.path.join(fs.knownFolders.documents().path, fileName);
+                    file = new java.io.File(path);
+                    intent.putExtra(android.provider.MediaStore.EXTRA_OUTPUT, file.toURI());
 
-                    intent.putExtra(android.provider.MediaStore.EXTRA_OUTPUT, android.net.Uri.fromFile(file))
+                } else {
+                    let fileName = `videoCapture_${+new Date()}.mp4`;
+                    let path = fs.path.join(android.os.Environment.getExternalStoragePublicDirectory(
+                        android.os.Environment.DIRECTORY_MOVIES).getAbsolutePath(), fileName);
+                    file = new java.io.File(path);
+                    intent.putExtra(android.provider.MediaStore.EXTRA_OUTPUT, file.toURI())
                 }
                 if (options.duration > 0) {
                     intent.putExtra(android.provider.MediaStore.EXTRA_DURATION_LIMIT, options.duration);
@@ -71,32 +76,41 @@ export class VideoRecorder {
                 } else {
                     reject({ event: 'failed' })
                 }
+
+
             }
 
             if (currentapiVersion >= MARSHMALLOW) {
 
                 if (options.explanation.length > 0) {
-                    permissions.requestPermission(android.Manifest.permission.CAMERA, options.explanation)
-                        .then(function () {
-                            startRecording();
-                        })
-                        .catch(function () {
-                            reject({ event: 'camera permission needed' })
-                        });
+                    if (permissions.hasPermission(android.Manifest.permission.CAMERA)) {
+                        startRecording();
+                    } else {
+                        permissions.requestPermission(android.Manifest.permission.CAMERA, options.explanation)
+                            .then(function () {
+                                startRecording();
+                            })
+                            .catch(function () {
+                                reject({ event: 'camera permission needed' })
+                            });
+                    }
                 } else {
-                    permissions.requestPermission(android.Manifest.permission.CAMERA)
-                        .then(function () {
-                            startRecording();
-                        })
-                        .catch(function () {
-                            reject({ event: 'camera permission needed' })
-                        });
+                    if (permissions.hasPermission(android.Manifest.permission.CAMERA)) {
+                        startRecording();
+                    } else {
+                        permissions.requestPermission(android.Manifest.permission.CAMERA)
+                            .then(function () {
+                                startRecording();
+                            })
+                            .catch(function () {
+                                reject({ event: 'camera permission needed' })
+                            });
+                    }
                 }
             }
             else {
-                startRecording()
+                startRecording();
             }
         })
-
     }
 }
