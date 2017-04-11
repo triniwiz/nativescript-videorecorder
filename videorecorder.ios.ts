@@ -3,7 +3,7 @@ var listener;
 export class VideoRecorder {
     constructor() { }
 
-    record(options: any): Promise<any> {
+    record(options?: any): Promise<any> {
 		return new Promise((resolve, reject) => {
 			listener = null;
 			var videoEditorController = new UIVideoEditorController();

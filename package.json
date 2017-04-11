@@ -1,8 +1,8 @@
 {
 	"name": "nativescript-videorecorder",
-	"version": "1.3.4",
+	"version": "1.3.5",
 	"description": "NativeScript videorecording plugin",
-	"main": "videorecorder.js",
+	"main": "videorecorder",
 	"nativescript": {
 		"platforms": {
 			"android": "1.5.0",
