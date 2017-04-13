@@ -8,6 +8,8 @@ const ORIENTATION_UNKNOWN = -1;
 const PERMISSION_DENIED = -1;
 const PERMISSION_GRANTED = 0;
 const MARSHMALLOW = 23;
+import * as applicationModule from "application";
+import * as platform from "platform";
 import * as fs from "file-system";
 import * as utils from "utils/utils";
 const currentapiVersion = android.os.Build.VERSION.SDK_INT;
@@ -37,16 +39,28 @@ export class VideoRecorder {
                 }
                 if (!options.saveToGallery) {
                     let fileName = `videoCapture_${+new Date()}.mp4`;
-                    let path = fs.path.join(fs.knownFolders.documents().path, fileName);
-                    file = new java.io.File(path);
+                    let path = android.os.Environment.getExternalStoragePublicDirectory(android.os.Environment.DIRECTORY_DCIM).getAbsolutePath() + "/Camera/" + fileName;
+                    
                     intent.putExtra(android.provider.MediaStore.EXTRA_OUTPUT, file.toURI());
 
                 } else {
                     let fileName = `videoCapture_${+new Date()}.mp4`;
-                    let path = fs.path.join(android.os.Environment.getExternalStoragePublicDirectory(
-                        android.os.Environment.DIRECTORY_MOVIES).getAbsolutePath(), fileName);
-                    file = new java.io.File(path);
-                    intent.putExtra(android.provider.MediaStore.EXTRA_OUTPUT, file.toURI())
+                   
+                   
+                    let sdkVersionInt = parseInt(platform.device.sdkVersion);
+                    if (sdkVersionInt > 21) {
+                        
+                         let path = android.os.Environment.getExternalStoragePublicDirectory(android.os.Environment.DIRECTORY_DCIM).getAbsolutePath() + "/Camera/" + fileName;
+                        file = new java.io.File(path);
+                        var tempPictureUri = (<any>android.support.v4.content).FileProvider.getUriForFile(applicationModule.android.currentContext, applicationModule.android.nativeApp.getPackageName() + ".provider", file);
+                        
+                        intent.putExtra(android.provider.MediaStore.EXTRA_OUTPUT, tempPictureUri)
+                    } else {
+                        let path = android.os.Environment.getExternalStoragePublicDirectory(android.os.Environment.DIRECTORY_DCIM).getAbsolutePath() + "/Camera/" + fileName;
+                        file = new java.io.File(path);
+                        intent.putExtra(android.provider.MediaStore.EXTRA_OUTPUT, android.net.Uri.fromFile(file))
+                    }
+                    
                 }
                 if (options.duration > 0) {
                     intent.putExtra(android.provider.MediaStore.EXTRA_DURATION_LIMIT, options.duration);
