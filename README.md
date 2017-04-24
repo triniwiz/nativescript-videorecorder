@@ -1,15 +1,12 @@
 [![npm](https://img.shields.io/npm/v/nativescript-videorecorder.svg)](https://www.npmjs.com/package/nativescript-videorecorder)
 [![npm](https://img.shields.io/npm/dt/nativescript-videorecorder.svg?label=npm%20downloads)](https://www.npmjs.com/package/nativescript-videorecorder)
-#NativeScript VideoRecorder
+# NativeScript VideoRecorder
 
-##Install
+## Install
 `tns plugin add nativescript-videorecorder`
 
-#
+### Usage
 
-###Usage
-
-###Android
 ```js
 var vr = require("nativescript-videorecorder");
 var videorecorder = new vr.VideoRecorder();
@@ -20,6 +17,7 @@ var options = {
     hd:true, //default  false low res | optional
     explanation:"Why do i need this permission" //optional on api 23 #android
 }
+
 videorecorder.record(options)
 .then((data)=>{
     console.log(data.file)
@@ -28,3 +26,6 @@ videorecorder.record(options)
     console.log(err)
 })
 ```
+
+# Note
+If using saveToGallery on IOS no file path is returned;
