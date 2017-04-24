@@ -1,6 +1,6 @@
 {
 	"name": "nativescript-videorecorder",
-	"version": "1.3.5",
+	"version": "1.4.0",
 	"description": "NativeScript videorecording plugin",
 	"main": "videorecorder",
 	"nativescript": {
@@ -48,6 +48,6 @@
 	"homepage": "https://github.com/triniwiz/nativescript-videorecorder",
 	"readmeFilename": "README.md",
 	"devDependencies": {
-		"typescript": "^1.8.10"
+		"typescript": "~2.1.0"
 	}
 }

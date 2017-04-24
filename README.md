@@ -27,5 +27,18 @@ videorecorder.record(options)
 })
 ```
 
+#IOS
+Add the following to your Info.plist `app/App_Resources/iOS/Info.plist`
+```xml
+<key>NSCameraUsageDescription</key>
+<string>This app needs access to the camera to take photos.</string>
+
+<key>NSMicrophoneUsageDescription</key>
+<string>This app needs access to the camera to take photos.</string>
+
+<key>NSPhotoLibraryUsageDescription</key>
+<string>This app needs access to photos.</string>
+```
+
 # Note
 If using saveToGallery on IOS no file path is returned;

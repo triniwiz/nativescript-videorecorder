@@ -2,14 +2,26 @@
     "compilerOptions": {
         "target": "es5",
         "module": "commonjs",
+        "declaration": true,
         "removeComments": true,
+        "noLib": true,
+        "skipLibCheck": true,
+        "emitDecoratorMetadata": true,
         "experimentalDecorators": true,
-        "sourceMap": true
+        "sourceMap": true,
+        "pretty": true,
+        "allowUnreachableCode": false,
+        "allowUnusedLabels": false,
+        "noEmitHelpers": true,
+        "noEmitOnError": false,
+        "noImplicitAny": false,
+        "noImplicitReturns": true,
+        "noImplicitUseStrict": false,
+        "noFallthroughCasesInSwitch": true
     },
-    "files": [
-        "demo/node_modules/tns-core-modules/tns-core-modules.d.ts",
-        "videorecorder.android.ts",
-        "videorecorder.ios.ts"
+    "exclude": [
+        "demo",
+        "node_modules"
     ],
     "compileOnSave": false
 }
