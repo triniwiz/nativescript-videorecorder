@@ -28,7 +28,7 @@ videorecorder.record(options)
 })
 ```
 
-#IOS
+# IOS
 Add the following to your Info.plist `app/App_Resources/iOS/Info.plist`
 ```xml
 <key>NSCameraUsageDescription</key>
