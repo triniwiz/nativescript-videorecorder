@@ -13,6 +13,7 @@ var videorecorder = new vr.VideoRecorder();
 var options = {
     saveToGallery:true, //default false | optional
     duration:30, //(seconds) default no limit | optional
+    format:'mp4', //allows videos to be played on android devices | optional | recommended for cross platform apps
     size:10, //(MB) default none | optional #android
     hd:true, //default  false low res | optional
     explanation:"Why do i need this permission" //optional on api 23 #android
