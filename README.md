@@ -7,8 +7,6 @@
 
 ### Usage
 
-### Usage
-
 ### Android
 ```js
 var vr = require("nativescript-videorecorder");
