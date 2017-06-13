@@ -1,1 +1,1 @@
-export * from './videorecorder'
+export * from './src/ios/videorecorder'
