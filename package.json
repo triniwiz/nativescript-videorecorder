@@ -1,4 +1,61 @@
 {
+  "name": "nativescript-videorecorder",
+  "version": "2.0.0",
+  "description": "NativeScript videorecording plugin",
+  "main": "videorecorder",
+  "nativescript": {
+    "platforms": {
+      "android": "3.0.0",
+      "ios": "3.0.0"
+    }
+  },
+  "dependencies": {
+    "nativescript-permissions": "latest"
+  },
+  "scripts": {
+    "build": "tsc",
+    "demo.ios": "npm run preparedemo ; cd demo ; tns emulate ios",
+    "demo.android": "npm run preparedemo ; cd demo ; tns run android",
+    "preparedemo": "npm run build ; cd demo ; tns plugin remove nativescript-videorecorder ; tns plugin add .. ; tns install",
+    "setup": "cd demo ; npm install ; cd .. ; npm run build ; cd demo ; tns plugin add .. ; cd .."
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/triniwiz/nativescript-videorecorder.git"
+  },
+  "keywords": [
+    "NativeScript",
+    "JavaScript",
+    "Android",
+    "IOS",
+    "video capture",
+    "video recorder"
+  ],
+  "contributors": [
+    {
+      "name": "Victor Sosa",
+      "url": "https://github.com/victorsosa"
+    }
+  ],
+  "author": {
+    "name": "Osei Fortune",
+    "email": "fortune.osei@yahoo.com"
+  },
+  "bugs": {
+    "url": "https://github.com/triniwiz/nativescript-videorecorder/issues"
+  },
+  "license": "MIT",
+  "homepage": "https://github.com/triniwiz/nativescript-videorecorder",
+  "readmeFilename": "README.md",
+  "devDependencies": {
+    "tns-core-modules": "^3.0.0",
+    "typescript": "~2.2.0",
+    "tns-platform-declarations": "^3.0.0"
+  },
+  "peerDependencies": {
+    "tns-core-modules": "^3.0.0"
+  }
+=======
 	"name": "nativescript-videorecorder",
 	"version": "1.4.0",
 	"description": "NativeScript videorecording plugin",

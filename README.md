@@ -7,6 +7,9 @@
 
 ### Usage
 
+### Usage
+
+### Android
 ```js
 var vr = require("nativescript-videorecorder");
 var videorecorder = new vr.VideoRecorder();
@@ -28,7 +31,8 @@ videorecorder.record(options)
 })
 ```
 
-# IOS
+### IOS
+
 Add the following to your Info.plist `app/App_Resources/iOS/Info.plist`
 ```xml
 <key>NSCameraUsageDescription</key>
@@ -43,3 +47,26 @@ Add the following to your Info.plist `app/App_Resources/iOS/Info.plist`
 
 # Note
 If using saveToGallery on IOS no file path is returned;
+
+```js
+var vr = require("nativescript-videorecorder");
+var videorecorder = new vr.VideoRecorder();
+var options = {
+    saveToGallery:true, //default false | optional
+    duration:30, //(seconds) default no limit | optional
+    size:10, //(MB) default none | optional,
+    format:'mp4', //allows videos to be played on android devices | optional | recommended for cross platform apps
+    hd:true, //default  false low res | optional
+}
+videorecorder.record(options)
+.then((data)=>{
+    console.log(data.file)
+})
+.catch((err)=>{
+    console.log(err)
+})
+```
+
+##### AdvancedVideoView 
+*IOS only atm*
+

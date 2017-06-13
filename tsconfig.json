@@ -19,6 +19,17 @@
         "noImplicitUseStrict": false,
         "noFallthroughCasesInSwitch": true
     },
+    "lib": [
+        "es6",
+        "dom"
+    ],
+    "baseUrl": ".",
+    "paths": {
+        "*": [
+            "./node_modules/tns-core-modules/*",
+            "./node_modules/*"
+        ]
+    },
     "exclude": [
         "demo",
         "node_modules"
