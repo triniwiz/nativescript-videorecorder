@@ -40,7 +40,7 @@ export class VideoRecorder {
                 if (!options.saveToGallery) {
                     let fileName = `videoCapture_${+new Date()}.mp4`;
                     let path = android.os.Environment.getExternalStoragePublicDirectory(android.os.Environment.DIRECTORY_DCIM).getAbsolutePath() + "/Camera/" + fileName;
-
+                    file = new java.io.File(path);
                     intent.putExtra(android.provider.MediaStore.EXTRA_OUTPUT, file.toURI());
 
                 } else {
