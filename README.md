@@ -29,22 +29,6 @@ videorecorder.record(options)
 })
 ```
 
-### IOS
-
-Add the following to your Info.plist `app/App_Resources/iOS/Info.plist`
-```xml
-<key>NSCameraUsageDescription</key>
-<string>This app needs access to the camera to take photos.</string>
-
-<key>NSMicrophoneUsageDescription</key>
-<string>This app needs access to the camera to take photos.</string>
-
-<key>NSPhotoLibraryUsageDescription</key>
-<string>This app needs access to photos.</string>
-```
-
-# Note
-If using saveToGallery on IOS no file path is returned;
 
 ```js
 var vr = require("nativescript-videorecorder");
@@ -65,6 +49,28 @@ videorecorder.record(options)
 })
 ```
 
-##### AdvancedVideoView 
-*IOS only atm*
+##### AdvancedVideoView
 
+```xml
+<Page xmlns="http://schemas.nativescript.org/tns.xsd" xmlns:recorder="nativescript-videorecorder/advanced">
+<recorder:AdvancedVideoView quality="highest" cameraPosition="front" id="camera"/>
+
+```
+
+```ts
+const advancedView = page.getViewById("camera");
+advancedView.startRecording();
+```
+
+## Api
+
+| Method                  | Default  | Type    | Description                                           |
+| ----------------------- | -------- | ------- | ----------------------------------------------------- |
+| start()                 |          | void    | Starts the camera preview                             |
+| stop()                  |          | void    | Stop the camera preview                               |
+| startRecording()        |          | void    | Start recording camera preview.                       |
+| stopRecording()         |          | void    | Stop recording camera preview.                        |
+| toggleCamera()          |          | void    | Toggles between front or the back camera.             |
+| duration                |          | int     | Get the current recording video duration.             |
+| cameraPosition          | BACK     | void    | Gets or Sets camera position                          |
+| quality                 | MAX_480P | void    | Gets or sets Video Quality                            |

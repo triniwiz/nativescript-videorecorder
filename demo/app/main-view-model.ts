@@ -1,19 +1,17 @@
-import { Observable } from 'data/observable';
-import { VideoRecorder } from './recorder/src/ios/videorecorder';
-
-import utils = require("utils/utils")
+import { Observable } from 'tns-core-modules/data/observable';
+import { VideoRecorder } from 'nativescript-videorecorder';
+import * as utils from 'tns-core-modules/utils/utils';
 export class HelloWorldModel extends Observable {
-  selectedVideo: string = ""
+  selectedVideo: string = '';
   constructor() {
     super();
   }
   recorder(options) {
-    var vr = new VideoRecorder();
+    const vr = new VideoRecorder();
     if (options) {
-      return vr.record(options)
+      return vr.record(options);
     } else {
       return vr.record();
     }
-
   }
 }

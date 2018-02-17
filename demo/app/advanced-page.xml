@@ -1,0 +1,18 @@
+<Page
+    xmlns="http://schemas.nativescript.org/tns.xsd" navigatingTo="navigatingTo"
+    xmlns:VideoPlayer="nativescript-videoplayer"
+    xmlns:recorder="nativescript-videorecorder/advanced" loaded="loaded">
+    <ActionBar title="Advanced VideoRecorder"/>
+    <StackLayout margin="20">
+        <recorder:AdvancedVideoView quality="highest" cameraPosition="front" height="40%" id="recorderView"/>
+        <Button text="Video Recorder" tap="goToVideoRecorder"/>
+        <StackLayout verticalAlignment="center">
+            <Button text="Toggle Camera" tap="toggleCamera"/>
+            <Label textAlignment="center" text="{{duration}}" />
+            <Label text="{{selectedVideo}}"/>
+            <Button text="Record Video" tap="recordVideo"/>
+            <Button text="Stop Recording" tap="stopRecording"/>
+            <VideoPlayer:Video height="100%" src="{{selectedVideo}}" loaded="videoplayerLoaded" finished="videoFinished" autoplay="true" />
+        </StackLayout>
+    </StackLayout>
+</Page>

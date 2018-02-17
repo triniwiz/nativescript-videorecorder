@@ -1,7 +1,0 @@
-demo/
-*.png
-*.log
-.vscode
-*.map
-*.ts
-tsconfig.json

@@ -1,0 +1,5 @@
+{
+    "name": "advanced-video-view",
+    "main": "advanced-video-view",
+    "types" : "index.d.ts"
+}
