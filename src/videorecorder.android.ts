@@ -43,26 +43,8 @@ export class VideoRecorder {
         let path;
         let tempPictureUri;
         const sdkVersionInt = parseInt(platform.device.sdkVersion, 10);
-        if (options.saveToGallery) {
-          path =
-            android.os.Environment.getExternalStoragePublicDirectory(
-              android.os.Environment.DIRECTORY_DCIM
-            ).getAbsolutePath() +
-            '/Camera/' +
-            fileName;
-          if (sdkVersionInt >= 21) {
-            file = new java.io.File(path);
-            tempPictureUri = (<any>android.support.v4
-              .content).FileProvider.getUriForFile(
-              app.android.context,
-              pkgName + '.provider',
-              file
-            );
-          } else {
-            file = new java.io.File(path);
-            tempPictureUri = android.net.Uri.fromFile(file);
-          }
-        } else {
+
+        if (!options.saveToGallery) {
           path = fs.path.join(fs.knownFolders.temp().path, fileName);
           file = new java.io.File(path);
           if (sdkVersionInt >= 21) {
@@ -75,12 +57,12 @@ export class VideoRecorder {
           } else {
             tempPictureUri = android.net.Uri.fromFile(file);
           }
-        }
 
-        intent.putExtra(
-          android.provider.MediaStore.EXTRA_OUTPUT,
-          tempPictureUri
-        );
+          intent.putExtra(
+            android.provider.MediaStore.EXTRA_OUTPUT,
+            tempPictureUri
+          );
+        }
 
         if (options.duration > 0) {
           intent.putExtra(
@@ -94,25 +76,20 @@ export class VideoRecorder {
           null
         ) {
           app.android.off(app.AndroidApplication.activityResultEvent);
-          app.android.on(
-            app.AndroidApplication.activityResultEvent,
-            (args: app.AndroidActivityResultEventData) => {
-              if (
-                args.requestCode === REQUEST_VIDEO_CAPTURE &&
-                args.resultCode === RESULT_OK
-              ) {
-                if (options.saveToGallery) {
-                  resolve({ file: file.toString() });
-                } else {
-                  resolve({ file: file.toString() });
-                }
-              } else if (args.resultCode === RESULT_CANCELED) {
-                reject({ event: 'cancelled' });
+          app.android.currentContext.onActivityResult = (requestCode, resultCode, resultData) => {
+            if (requestCode === REQUEST_VIDEO_CAPTURE && resultCode === RESULT_OK) {
+              const mediaFile = resultData.getData();
+              if (options.saveToGallery) {
+                resolve({ file: getRealPathFromURI(mediaFile) });
               } else {
-                reject({ event: 'failed' });
+                resolve({ file: file.toString() });
               }
+            } else if (resultCode === RESULT_CANCELED) {
+              reject({ event: 'cancelled' });
+            } else {
+              reject({ event: 'failed' });
             }
-          );
+          };
 
           app.android.foregroundActivity.startActivityForResult(
             intent,
@@ -212,3 +189,20 @@ export const requestPermissions = (options): Promise<any> => {
     }
   });
 };
+
+function getRealPathFromURI(contentUri: android.net.Uri): string {
+  let path: string;
+  const activity = app.android.startActivity;
+  const proj: Array<string> = [android.provider.MediaStore.MediaColumns.DATA];
+  const cursor: android.database.Cursor = activity.getApplicationContext()
+    .getContentResolver()
+    .query(contentUri, proj, null, null, null);
+
+  if (cursor.moveToFirst()) {
+    const columnIndex: number = cursor.getColumnIndexOrThrow(android.provider.MediaStore.MediaColumns.DATA);
+    path = cursor.getString(columnIndex);
+  }
+  cursor.close();
+
+  return path;
+}
