@@ -1,4 +1,3 @@
-/// <reference path="./_helpers.d.ts" />
 declare module co {
 	export module fitcom {
 		export module fancycamera {
