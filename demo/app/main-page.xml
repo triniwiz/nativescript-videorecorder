@@ -7,11 +7,11 @@
     <Button text="Open Advanced Camera View" tap="openAdvancedCameraView"/>
     <StackLayout verticalAlignment="center">
       <Button text="Toggle Camera" tap="toggleCamera"/>
+      <Label textAlignment="center" text="{{position}}"/>
       <Label textAlignment="center" text="{{duration}}" />
-      <Label text="{{selectedVideo}}"/>
-      <Button text="Preview Video" tap="openPreview"/>
+      <Label text="{{selectedVideo}}" textWrap="true"/>
       <Button text="Record Video" tap="recordVideo"/>
-      <Button text="Stop Recording" tap="stopRecording"/>
+      <Label textAlignment="center" text="{{error}}" color="red" textWrap="true" />
       <VideoPlayer:Video height="100%" src="{{selectedVideo}}" loaded="videoplayerLoaded" finished="videoFinished" autoplay="true" />
     </StackLayout>
   </StackLayout>
