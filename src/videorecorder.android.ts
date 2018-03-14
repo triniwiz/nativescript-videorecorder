@@ -1,30 +1,19 @@
-import { Options } from '.'
-
 import * as permissions from 'nativescript-permissions';
 import * as app from 'tns-core-modules/application';
 import * as platform from 'tns-core-modules/platform';
 import * as fs from 'tns-core-modules/file-system';
 import * as utils from 'tns-core-modules/utils/utils';
 import './async-await';
+
+import { VideoRecorder as BaseVideoRecorder } from './videorecorder.common'
+import { Options } from '.';
+
 const RESULT_CANCELED = 0;
 const RESULT_OK = -1;
 const REQUEST_VIDEO_CAPTURE = 999;
 
-export class VideoRecorder {
-  record(options?: Options): Promise<any> {
-    options = {
-      size: 0,
-      hd: false,
-      saveToGallery: false,
-      duration: 0,
-      explanation: null,
-      ...options,
-    }
-
-    return this._handlePermissions(options).then(() => this._startRecording(options))
-  }
-
-  private _handlePermissions (options: Options): Promise<any> {
+export class VideoRecorder extends BaseVideoRecorder{
+  public requestPermissions(options: Options = this.options): Promise<void> {
     return permissions.requestPermissions(
       [
         (android as any).Manifest.permission.CAMERA,
@@ -32,12 +21,9 @@ export class VideoRecorder {
       ],
       options.explanation && options.explanation.length && options.explanation
     )
-      .catch((err) => {
-        throw { event: 'denied' }
-      })
   }
 
-  private _startRecording (options: Options): Promise<any> {
+  protected _startRecording(options: Options = this.options): Promise<any> {
     return new Promise ((resolve, reject) => {
       let data = null;
       let file;

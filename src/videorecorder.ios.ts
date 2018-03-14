@@ -1,34 +1,40 @@
-import { Options, VideoFormat, CameraPosition } from '.'
-
 import * as frame from 'tns-core-modules/ui/frame';
 import * as fs from 'tns-core-modules/file-system';
 import * as types from 'tns-core-modules/utils/types';
 import { Color } from 'tns-core-modules/color';
 import { View, layout, Property } from 'tns-core-modules/ui/core/view';
 import './async-await';
-let listener;
-export class VideoRecorder {
-  public record(
-    options?: Options
-  ): Promise<any> {
-    options = {
-      saveToGallery: false,
-      hd: false,
-      format: 'default',
-      position: 'back',
-      size: 0,
-      duration: 0,
-      ...options,
-    }
 
+import { Options, VideoFormat } from '.'
+import { VideoRecorder as BaseVideoRecorder } from './videorecorder.common'
+
+let listener;
+export class VideoRecorder extends BaseVideoRecorder {
+  public requestPermissions (options: Options = this.options): Promise<any> {
+    return new Promise((resolve, reject) => {
+      // Permission is only necessary when file needs to be saved in gallery
+      if (!options.saveToGallery) return resolve()
+
+      let authStatus = PHPhotoLibrary.authorizationStatus();
+      if (authStatus === PHAuthorizationStatus.NotDetermined) {
+        PHPhotoLibrary.requestAuthorization(auth => {
+          if (auth === PHAuthorizationStatus.Authorized) {
+            resolve();
+          }
+        });
+      } else if (authStatus !== PHAuthorizationStatus.Authorized) {
+        reject();
+      }
+    });
+  };
+
+  protected _startRecording(options: Options = this.options): Promise<any> {
     return new Promise((resolve, reject) => {
       listener = null;
       let picker = UIImagePickerController.new();
       let sourceType = UIImagePickerControllerSourceType.Camera;
       picker.mediaTypes = <any>[kUTTypeMovie];
       picker.sourceType = sourceType;
-      options.saveToGallery = Boolean(options.saveToGallery) ? true : false;
-      options.hd = Boolean(options.hd) ? true : false;
       picker.cameraCaptureMode = UIImagePickerControllerCameraCaptureMode.Video;
 
       picker.allowsEditing = false;
@@ -40,13 +46,6 @@ export class VideoRecorder {
         types.isNumber(options.duration) && options.duration > 0
           ? Number(options.duration)
           : Number.POSITIVE_INFINITY;
-
-      if (options && options.saveToGallery) {
-        let authStatus = PHPhotoLibrary.authorizationStatus();
-        if (authStatus === PHAuthorizationStatus.Authorized) {
-          options.saveToGallery = true;
-        }
-      }
 
       if (options) {
         listener = UIImagePickerControllerDelegateImpl.initWithOwnerCallbackOptions(
@@ -95,7 +94,7 @@ class UIImagePickerControllerDelegateImpl extends NSObject
   public static initWithOwnerCallbackOptions(
     owner: any /*WeakRef<VideoRecorder>*/,
     callback: (result?) => void,
-    options?: any
+    options?: Options
   ): UIImagePickerControllerDelegateImpl {
     let delegate = new UIImagePickerControllerDelegateImpl();
     if (options) {
@@ -193,17 +192,3 @@ class UIImagePickerControllerDelegateImpl extends NSObject
     }
   }
 }
-export const requestPermissions = function(): Promise<any> {
-  return new Promise((resolve, reject) => {
-    let authStatus = PHPhotoLibrary.authorizationStatus();
-    if (authStatus === PHAuthorizationStatus.NotDetermined) {
-      PHPhotoLibrary.requestAuthorization(auth => {
-        if (auth === PHAuthorizationStatus.Authorized) {
-          resolve();
-        }
-      });
-    } else if (authStatus !== PHAuthorizationStatus.Authorized) {
-      reject();
-    }
-  });
-};
