@@ -45,9 +45,11 @@ export class VideoRecorder {
         const sdkVersionInt = parseInt(platform.device.sdkVersion, 10);
 
         if (!options.saveToGallery) {
-          path = fs.path.join(fs.knownFolders.temp().path, fileName);
-          file = new java.io.File(path);
+          // path = fs.path.join(fs.knownFolders.temp().path, fileName);
+          // file = new java.io.File(path);
           if (sdkVersionInt >= 21) {
+            path = app.android.currentContext.getExternalCacheDir(null)
+            file = new java.io.File(path, fileName);
             tempPictureUri = (<any>android.support.v4
               .content).FileProvider.getUriForFile(
               app.android.foregroundActivity,
@@ -55,6 +57,8 @@ export class VideoRecorder {
               file
             );
           } else {
+            path = fs.path.join(fs.knownFolders.temp().path, fileName);
+            file = new java.io.File(path);
             tempPictureUri = android.net.Uri.fromFile(file);
           }
 
@@ -78,7 +82,7 @@ export class VideoRecorder {
           app.android.off(app.AndroidApplication.activityResultEvent);
           app.android.currentContext.onActivityResult = (requestCode, resultCode, resultData) => {
             if (requestCode === REQUEST_VIDEO_CAPTURE && resultCode === RESULT_OK) {
-              const mediaFile = resultData.getData();
+              const mediaFile = resultData ? resultData.getData() : file
               if (options.saveToGallery) {
                 resolve({ file: getRealPathFromURI(mediaFile) });
               } else {
