@@ -9,21 +9,17 @@ import './async-await';
 const RESULT_CANCELED = 0;
 const RESULT_OK = -1;
 const REQUEST_VIDEO_CAPTURE = 999;
-const REQUEST_CODE_ASK_PERMISSIONS = 1000;
-const ORIENTATION_UNKNOWN = -1;
-const PERMISSION_DENIED = -1;
-const PERMISSION_GRANTED = 0;
-const MARSHMALLOW = 23;
-const currentapiVersion = android.os.Build.VERSION.SDK_INT;
 
 export class VideoRecorder {
-  record(options: Options = null): Promise<any> {
-    options = options || {};
-    options.size = options.size || 0;
-    options.hd = !!options.hd;
-    options.saveToGallery = options.saveToGallery || false;
-    options.duration = options.duration || 0;
-    options.explanation = options.explanation || '';
+  record(options?: Options): Promise<any> {
+    options = {
+      size: 0,
+      hd: false,
+      saveToGallery: false,
+      duration: 0,
+      explanation: null,
+      ...options,
+    }
 
     return this._handlePermissions(options).then(() => this._startRecording(options))
   }
@@ -49,7 +45,7 @@ export class VideoRecorder {
 
       const state = app.android.currentContext.getExternalStorageState()
       if (state !== android.os.Environment.MEDIA_MOUNTED) {
-        return reject({ event: 'no_external_storage_access' })
+        return reject({ event: 'failed' })
       }
 
       const intent = new android.content.Intent(

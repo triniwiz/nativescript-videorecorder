@@ -9,15 +9,18 @@ import './async-await';
 let listener;
 export class VideoRecorder {
   public record(
-    options: Options = {
+    options?: Options
+  ): Promise<any> {
+    options = {
       saveToGallery: false,
       hd: false,
       format: 'default',
       position: 'back',
       size: 0,
-      duration: 0
+      duration: 0,
+      ...options,
     }
-  ): Promise<any> {
+
     return new Promise((resolve, reject) => {
       listener = null;
       let picker = UIImagePickerController.new();
