@@ -1,37 +1,6 @@
-export interface Options {
-  size?: number,
-  hd?: boolean,
-  saveToGallery?: boolean,
-  duration?: number,
-  explanation?: string,
-  format?: VideoFormatType,
-  position?: CameraPositionType,
-}
+import { VideoRecorderCommon } from './videorecorder.common'
+export * from './videorecorder.common'
 
-export interface RecordResult {
-  file: string,
-}
+export declare class VideoRecorder extends VideoRecorderCommon {
 
-export type CameraPositionType = 'front' | 'back' | 'none';
-export type VideoFormatType = 'default' | 'mp4';
-
-export enum CameraPosition {
-  FRONT = 'front',
-  BACK = 'back',
-  NONE = 'none',
-}
-
-export enum VideoFormat {
-  DEFAULT = 'default',
-  MP4 = 'mp4',
-}
-
-export declare class VideoRecorder {
-  options: Options
-  
-  constructor(options?: Options);
-
-  public record(options?: Options): Promise<RecordResult>;
-  public requestPermissions(): Promise<any>;
-  public isAvailable(): boolean;
 }

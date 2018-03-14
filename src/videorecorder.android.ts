@@ -5,15 +5,18 @@ import * as fs from 'tns-core-modules/file-system';
 import * as utils from 'tns-core-modules/utils/utils';
 import './async-await';
 
-import { VideoRecorder as BaseVideoRecorder } from './videorecorder.common'
-import { Options, RecordResult } from '.';
-import { CameraPosition } from '.';
+import {
+  VideoRecorderCommon,
+  Options, RecordResult, CameraPosition,
+} from './videorecorder.common';
+
+export * from './videorecorder.common';
 
 const RESULT_CANCELED = 0;
 const RESULT_OK = -1;
 const REQUEST_VIDEO_CAPTURE = 999;
 
-export class VideoRecorder extends BaseVideoRecorder{
+export class VideoRecorder extends VideoRecorderCommon {
   public requestPermissions(): Promise<void> {
     return permissions.requestPermissions(
       [
@@ -21,13 +24,13 @@ export class VideoRecorder extends BaseVideoRecorder{
         (android as any).Manifest.permission.RECORD_AUDIO
       ],
       this.options.explanation && this.options.explanation.length && this.options.explanation
-    )
+    );
   }
 
   public isAvailable() {
     const feature = this.options.position === CameraPosition.FRONT
       ? android.content.pm.PackageManager.FEATURE_CAMERA_FRONT
-      : android.content.pm.PackageManager.FEATURE_CAMERA
+      : android.content.pm.PackageManager.FEATURE_CAMERA;
 
     return app.android.currentContext.getPackageManager().hasSystemFeature(feature);
   }
@@ -38,9 +41,9 @@ export class VideoRecorder extends BaseVideoRecorder{
       let file;
       const pkgName = utils.ad.getApplication().getPackageName();
 
-      const state = app.android.currentContext.getExternalStorageState()
+      const state = android.os.Environment.getExternalStorageState();
       if (state !== android.os.Environment.MEDIA_MOUNTED) {
-        return reject({ event: 'failed' })
+        return reject({ event: 'failed' });
       }
 
       const intent = new android.content.Intent(
@@ -76,7 +79,7 @@ export class VideoRecorder extends BaseVideoRecorder{
           android.os.Environment.DIRECTORY_DCIM
         ).getAbsolutePath() + '/Camera';
       } else {
-        path = app.android.currentContext.getExternalFileDir(null).getAbsolutePath();
+        path = app.android.currentContext.getExternalFilesDir(null).getAbsolutePath();
       }
 
       file = new java.io.File(path + '/' + fileName);
@@ -110,7 +113,7 @@ export class VideoRecorder extends BaseVideoRecorder{
         app.android.off(app.AndroidApplication.activityResultEvent);
         app.android.currentContext.onActivityResult = (requestCode, resultCode, resultData) => {
           if (requestCode === REQUEST_VIDEO_CAPTURE && resultCode === RESULT_OK) {
-            const mediaFile = resultData ? resultData.getData() : file
+            const mediaFile = resultData ? resultData.getData() : file;
             if (options.saveToGallery) {
               resolve({ file: getRealPathFromURI(mediaFile) });
             } else {

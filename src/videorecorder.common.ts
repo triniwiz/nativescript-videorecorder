@@ -1,47 +1,67 @@
-import {
-  VideoRecorder as VideoRecorderDefinition,
-  VideoFormat,
-  CameraPosition,
-  RecordResult
-} from '.'
-import { Options } from '.'
+export interface Options {
+  size?: number;
+  hd?: boolean;
+  saveToGallery?: boolean;
+  duration?: number;
+  explanation?: string;
+  format?: VideoFormatType;
+  position?: CameraPositionType;
+}
 
-export abstract class VideoRecorder implements VideoRecorderDefinition {
-  options: Options
-  
+export interface RecordResult {
+  file: string;
+}
+
+export type CameraPositionType = 'front' | 'back' | 'none';
+export type VideoFormatType = 'default' | 'mp4';
+
+export enum CameraPosition {
+  FRONT = 'front',
+  BACK = 'back',
+  NONE = 'none',
+}
+
+export enum VideoFormat {
+  DEFAULT = 'default',
+  MP4 = 'mp4',
+}
+
+export abstract class VideoRecorderCommon {
+  options: Options;
+
   constructor(options?: Options) {
-    this.options = {
-      format: VideoFormat.DEFAULT,
-      position: CameraPosition.NONE,
-      size: 0,
-      duration: 0,
-      explanation: null,
-      ...options,
-      saveToGallery: !!options.saveToGallery,
-      hd: !!options.hd,
-    }
+    this.options = Object.assign(
+      Object.assign({
+        format: VideoFormat.DEFAULT,
+        position: CameraPosition.NONE,
+        size: 0,
+        duration: 0,
+        explanation: null
+      }, options || {}), {
+        saveToGallery: !!options.saveToGallery,
+        hd: !!options.hd,
+      }
+    );
   }
 
   // @deprecated Options as argument is deprecated here
   public record(options?: Options): Promise<RecordResult> {
-    options = { ...this.options, ...options }
+    options = Object.assign(this.options, options || {});
 
     return this.requestPermissions(options).catch((err) => {
-      throw { event: 'denied' }
-    }).then(() => this._startRecording(options))
+      throw { event: 'denied' };
+    }).then(() => { return this._startRecording(options); });
   }
 
   public requestPermissions(options?: Options): Promise<any> {
-    return Promise.resolve()
+    return Promise.resolve();
   }
 
   public isAvailable(): boolean {
-    return false
+    return false;
   }
 
   protected _startRecording(options?: Options): Promise<RecordResult> {
-    return Promise.reject({ event: 'failed' })
+    return Promise.reject({ event: 'failed' });
   }
 }
-
-export default VideoRecorder

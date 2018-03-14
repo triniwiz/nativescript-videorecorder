@@ -5,15 +5,19 @@ import { Color } from 'tns-core-modules/color';
 import { View, layout, Property } from 'tns-core-modules/ui/core/view';
 import './async-await';
 
-import { Options, VideoFormat, VideoFormatType, CameraPosition, RecordResult } from '.'
-import { VideoRecorder as BaseVideoRecorder } from './videorecorder.common'
+import {
+  VideoRecorderCommon,
+  Options, VideoFormat, VideoFormatType, CameraPosition, RecordResult,
+} from './videorecorder.common';
+
+export * from './videorecorder.common';
 
 let listener;
-export class VideoRecorder extends BaseVideoRecorder {
+export class VideoRecorder extends VideoRecorderCommon {
   public requestPermissions (): Promise<any> {
     return new Promise((resolve, reject) => {
       // Permission is only necessary when file needs to be saved in gallery
-      if (!this.options.saveToGallery) return resolve()
+      if (!this.options.saveToGallery) return resolve();
 
       let authStatus = PHPhotoLibrary.authorizationStatus();
       if (authStatus === PHAuthorizationStatus.NotDetermined) {
