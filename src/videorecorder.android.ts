@@ -49,12 +49,23 @@ export class VideoRecorder extends BaseVideoRecorder{
 
       intent.putExtra('android.intent.extra.videoQuality', options.hd ? 1 : 0);
 
+
+      if (options.position !== CameraPosition.NONE) {
+        intent.putExtra(
+          'android.intent.extras.CAMERA_FACING',
+          options.position === CameraPosition.BACK
+            ? android.hardware.Camera.CameraInfo.CAMERA_FACING_FRONT
+            : android.hardware.Camera.CameraInfo.CAMERA_FACING_BACK
+        );
+      }
+
       if (options.size > 0) {
         intent.putExtra(
           android.provider.MediaStore.EXTRA_SIZE_LIMIT,
           options.size * 1024 * 1024
         );
       }
+      
       const fileName = `VID_${+new Date()}.mp4`;
       let path;
       let tempPictureUri;

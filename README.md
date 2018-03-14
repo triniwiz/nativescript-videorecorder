@@ -55,7 +55,7 @@ Option object can be given to the constructor of `VideoRecorder` or as `VideoRec
 * **hd?: boolean** - If true, highest quality of device, if false MMS quality (default: `false`)
 * **saveToGallery?: boolean** - Enable to save the video in the device Gallery, otherwise it will be store within the sandbox of the app (default: `false`)
 * **duration?: number** - Limit the duration of the video, 0 for unlimited (default: `0`)
-* **position?: 'front' | 'back'** -
+* **position?: 'front' | 'back' | 'none'** - Force which device camera should be used, `'none'` for no preferences (default: `none`)
 
 Additionnal parameters for Android:
 

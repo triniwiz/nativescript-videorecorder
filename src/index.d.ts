@@ -8,12 +8,13 @@ export interface Options {
   position?: CameraPositionType,
 }
 
-export type CameraPositionType = 'front' | 'back';
+export type CameraPositionType = 'front' | 'back' | 'none';
 export type VideoFormatType = 'default' | 'mp4';
 
 export enum CameraPosition {
   FRONT = 'front',
   BACK = 'back',
+  NONE = 'none',
 }
 
 export enum VideoFormat {

@@ -1,4 +1,4 @@
-import { VideoRecorder as VideoRecorderDefinition } from '.'
+import { VideoRecorder as VideoRecorderDefinition, VideoFormat, CameraPosition } from '.'
 import { Options } from '.'
 
 export abstract class VideoRecorder implements VideoRecorderDefinition {
@@ -6,8 +6,8 @@ export abstract class VideoRecorder implements VideoRecorderDefinition {
   
   constructor(options?: Options) {
     this.options = {
-      format: 'default',
-      position: 'back',
+      format: VideoFormat.DEFAULT,
+      position: CameraPosition.NONE,
       size: 0,
       duration: 0,
       explanation: null,

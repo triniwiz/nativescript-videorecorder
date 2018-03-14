@@ -5,7 +5,7 @@ import { Color } from 'tns-core-modules/color';
 import { View, layout, Property } from 'tns-core-modules/ui/core/view';
 import './async-await';
 
-import { Options, VideoFormat, VideoFormatType } from '.'
+import { Options, VideoFormat, VideoFormatType, CameraPosition } from '.'
 import { VideoRecorder as BaseVideoRecorder } from './videorecorder.common'
 
 let listener;
@@ -36,10 +36,15 @@ export class VideoRecorder extends BaseVideoRecorder {
     return new Promise((resolve, reject) => {
       listener = null;
       let picker = UIImagePickerController.new();
-      let sourceType = UIImagePickerControllerSourceType.Camera;
       picker.mediaTypes = <any>[kUTTypeMovie];
-      picker.sourceType = sourceType;
+      picker.sourceType = UIImagePickerControllerSourceType.Camera;
       picker.cameraCaptureMode = UIImagePickerControllerCameraCaptureMode.Video;
+
+      if (options.position !== CameraPosition.NONE) {
+        picker.cameraDevice = options.position === CameraPosition.FRONT
+          ? UIImagePickerControllerCameraDevice.Front
+          : UIImagePickerControllerCameraDevice.Rear;
+      }
 
       picker.allowsEditing = false;
       picker.videoQuality = options.hd
