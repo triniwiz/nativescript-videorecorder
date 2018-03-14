@@ -4,18 +4,29 @@ export interface Options {
   saveToGallery?: boolean,
   duration?: number,
   explanation?: string,
-  format?: VideoFormat,
-  position?: CameraPosition,
+  format?: VideoFormatType,
+  position?: CameraPositionType,
 }
 
-export type CameraPosition = 'front' | 'back';
-export type VideoFormat = 'default' | 'mp4';
+export type CameraPositionType = 'front' | 'back';
+export type VideoFormatType = 'default' | 'mp4';
+
+export enum CameraPosition {
+  FRONT = 'front',
+  BACK = 'back',
+}
+
+export enum VideoFormat {
+  DEFAULT = 'default',
+  MP4 = 'mp4',
+}
 
 export declare class VideoRecorder {
   options: Options
   
   constructor(options?: Options);
 
-  public record(): Promise<any>;
+  public record(options?: Options): Promise<any>;
   public requestPermissions(): Promise<any>;
+  public isAvailable(): boolean;
 }

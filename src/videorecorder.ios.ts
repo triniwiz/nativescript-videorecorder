@@ -5,15 +5,15 @@ import { Color } from 'tns-core-modules/color';
 import { View, layout, Property } from 'tns-core-modules/ui/core/view';
 import './async-await';
 
-import { Options, VideoFormat } from '.'
+import { Options, VideoFormat, VideoFormatType } from '.'
 import { VideoRecorder as BaseVideoRecorder } from './videorecorder.common'
 
 let listener;
 export class VideoRecorder extends BaseVideoRecorder {
-  public requestPermissions (options: Options = this.options): Promise<any> {
+  public requestPermissions (): Promise<any> {
     return new Promise((resolve, reject) => {
       // Permission is only necessary when file needs to be saved in gallery
-      if (!options.saveToGallery) return resolve()
+      if (!this.options.saveToGallery) return resolve()
 
       let authStatus = PHPhotoLibrary.authorizationStatus();
       if (authStatus === PHAuthorizationStatus.NotDetermined) {
@@ -26,7 +26,11 @@ export class VideoRecorder extends BaseVideoRecorder {
         reject();
       }
     });
-  };
+  }
+
+  public isAvailable() {
+    return UIImagePickerController.isSourceTypeAvailable(UIImagePickerControllerSourceType.Camera);
+  }
 
   protected _startRecording(options: Options = this.options): Promise<any> {
     return new Promise((resolve, reject) => {
@@ -82,7 +86,7 @@ class UIImagePickerControllerDelegateImpl extends NSObject
   public static ObjCProtocols = [UIImagePickerControllerDelegate];
   private _saveToGallery: boolean;
   private _callback: (result?) => void;
-  private _format: VideoFormat = 'default';
+  private _format: VideoFormatType = VideoFormat.DEFAULT;
   private _hd: boolean;
   public static initWithCallback(
     callback: (result?) => void
@@ -121,7 +125,7 @@ class UIImagePickerControllerDelegateImpl extends NSObject
       let currentDate: Date = new Date();
       if (this._saveToGallery) {
         let source = info.objectForKey(UIImagePickerControllerMediaURL);
-        if (this._format === 'mp4') {
+        if (this._format === VideoFormat.MP4) {
           let asset = AVAsset.assetWithURL(source);
           let preset = this._hd
             ? AVAssetExportPresetHighestQuality
@@ -162,7 +166,7 @@ class UIImagePickerControllerDelegateImpl extends NSObject
         }
       } else {
         let source = info.objectForKey(UIImagePickerControllerMediaURL);
-        if (this._format === 'mp4') {
+        if (this._format === VideoFormat.MP4) {
           let asset = AVAsset.assetWithURL(source);
           let preset = this._hd
             ? AVAssetExportPresetHighestQuality

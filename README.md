@@ -72,10 +72,11 @@ Additionnal parameters for iOS:
 
 ### VideoRecorder methods:
 
-* **record(options?: Options): Promise<{ file?: string } >** Return a Promise with an object containing the filepath as `file` key. It may not be there if the video has been saved to the gallery. An optional `options` parameter can be given to override instance `options`.
+* **record(options?: Options): Promise<{ file?: string } >** Return a Promise with an object containing the filepath as `file` key. It may not be there if the video has been saved to the gallery. An optional `options` parameter can be given to override instance `options`, this is deprecated.
 * **requestPermissions(): Promise<void>** Return a Promise, resolved if permissions are OK (ask for permissions if not), rejected if user didn't have accepted the permissions. This method is implicitely called by `record()`
+* **isAvailable(): boolean** Check if device has a camera and is compatible with what has been set in options
 
-Promises can be rejected with:
+Promises above can be rejected with:
 
 * `{ event: 'denied'}` - Permissions have not been accepted
 * `{ event: 'cancelled'}` - Video capture have been canceled

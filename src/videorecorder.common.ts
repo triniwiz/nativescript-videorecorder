@@ -17,6 +17,7 @@ export abstract class VideoRecorder implements VideoRecorderDefinition {
     }
   }
 
+  // @deprecated Options as argument is deprecated here
   public record(options?: Options): Promise<any> {
     options = { ...this.options, ...options }
 
@@ -27,6 +28,10 @@ export abstract class VideoRecorder implements VideoRecorderDefinition {
 
   public requestPermissions(options?: Options): Promise<any> {
     return Promise.resolve()
+  }
+
+  public isAvailable(): boolean {
+    return false
   }
 
   protected _startRecording(options?: Options): Promise<any> {

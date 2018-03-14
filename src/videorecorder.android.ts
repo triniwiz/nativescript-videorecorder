@@ -7,20 +7,29 @@ import './async-await';
 
 import { VideoRecorder as BaseVideoRecorder } from './videorecorder.common'
 import { Options } from '.';
+import { CameraPosition } from '.';
 
 const RESULT_CANCELED = 0;
 const RESULT_OK = -1;
 const REQUEST_VIDEO_CAPTURE = 999;
 
 export class VideoRecorder extends BaseVideoRecorder{
-  public requestPermissions(options: Options = this.options): Promise<void> {
+  public requestPermissions(): Promise<void> {
     return permissions.requestPermissions(
       [
         (android as any).Manifest.permission.CAMERA,
         (android as any).Manifest.permission.RECORD_AUDIO
       ],
-      options.explanation && options.explanation.length && options.explanation
+      this.options.explanation && this.options.explanation.length && this.options.explanation
     )
+  }
+
+  public isAvailable() {
+    const feature = this.options.position === CameraPosition.FRONT
+      ? android.content.pm.PackageManager.FEATURE_CAMERA_FRONT
+      : android.content.pm.PackageManager.FEATURE_CAMERA
+
+    return app.android.currentContext.getPackageManager().hasSystemFeature(feature);
   }
 
   protected _startRecording(options: Options = this.options): Promise<any> {
