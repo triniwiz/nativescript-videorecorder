@@ -6,7 +6,7 @@ import * as utils from 'tns-core-modules/utils/utils';
 import './async-await';
 
 import { VideoRecorder as BaseVideoRecorder } from './videorecorder.common'
-import { Options } from '.';
+import { Options, RecordResult } from '.';
 import { CameraPosition } from '.';
 
 const RESULT_CANCELED = 0;
@@ -32,7 +32,7 @@ export class VideoRecorder extends BaseVideoRecorder{
     return app.android.currentContext.getPackageManager().hasSystemFeature(feature);
   }
 
-  protected _startRecording(options: Options = this.options): Promise<any> {
+  protected _startRecording(options: Options = this.options): Promise<RecordResult> {
     return new Promise ((resolve, reject) => {
       let data = null;
       let file;
@@ -65,7 +65,7 @@ export class VideoRecorder extends BaseVideoRecorder{
           options.size * 1024 * 1024
         );
       }
-      
+
       const fileName = `VID_${+new Date()}.mp4`;
       let path;
       let tempPictureUri;

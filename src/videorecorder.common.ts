@@ -1,4 +1,9 @@
-import { VideoRecorder as VideoRecorderDefinition, VideoFormat, CameraPosition } from '.'
+import {
+  VideoRecorder as VideoRecorderDefinition,
+  VideoFormat,
+  CameraPosition,
+  RecordResult
+} from '.'
 import { Options } from '.'
 
 export abstract class VideoRecorder implements VideoRecorderDefinition {
@@ -18,7 +23,7 @@ export abstract class VideoRecorder implements VideoRecorderDefinition {
   }
 
   // @deprecated Options as argument is deprecated here
-  public record(options?: Options): Promise<any> {
+  public record(options?: Options): Promise<RecordResult> {
     options = { ...this.options, ...options }
 
     return this.requestPermissions(options).catch((err) => {
@@ -34,7 +39,7 @@ export abstract class VideoRecorder implements VideoRecorderDefinition {
     return false
   }
 
-  protected _startRecording(options?: Options): Promise<any> {
+  protected _startRecording(options?: Options): Promise<RecordResult> {
     return Promise.reject({ event: 'failed' })
   }
 }

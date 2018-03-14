@@ -8,6 +8,10 @@ export interface Options {
   position?: CameraPositionType,
 }
 
+export interface RecordResult {
+  file: string,
+}
+
 export type CameraPositionType = 'front' | 'back' | 'none';
 export type VideoFormatType = 'default' | 'mp4';
 
@@ -27,7 +31,7 @@ export declare class VideoRecorder {
   
   constructor(options?: Options);
 
-  public record(options?: Options): Promise<any>;
+  public record(options?: Options): Promise<RecordResult>;
   public requestPermissions(): Promise<any>;
   public isAvailable(): boolean;
 }

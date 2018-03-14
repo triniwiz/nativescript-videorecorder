@@ -5,7 +5,7 @@ import { Color } from 'tns-core-modules/color';
 import { View, layout, Property } from 'tns-core-modules/ui/core/view';
 import './async-await';
 
-import { Options, VideoFormat, VideoFormatType, CameraPosition } from '.'
+import { Options, VideoFormat, VideoFormatType, CameraPosition, RecordResult } from '.'
 import { VideoRecorder as BaseVideoRecorder } from './videorecorder.common'
 
 let listener;
@@ -32,7 +32,7 @@ export class VideoRecorder extends BaseVideoRecorder {
     return UIImagePickerController.isSourceTypeAvailable(UIImagePickerControllerSourceType.Camera);
   }
 
-  protected _startRecording(options: Options = this.options): Promise<any> {
+  protected _startRecording(options: Options = this.options): Promise<RecordResult> {
     return new Promise((resolve, reject) => {
       listener = null;
       let picker = UIImagePickerController.new();
@@ -90,7 +90,7 @@ class UIImagePickerControllerDelegateImpl extends NSObject
   implements UIImagePickerControllerDelegate {
   public static ObjCProtocols = [UIImagePickerControllerDelegate];
   private _saveToGallery: boolean;
-  private _callback: (result?) => void;
+  private _callback: (result?: RecordResult) => void;
   private _format: VideoFormatType = VideoFormat.DEFAULT;
   private _hd: boolean;
   public static initWithCallback(
@@ -102,7 +102,7 @@ class UIImagePickerControllerDelegateImpl extends NSObject
   }
   public static initWithOwnerCallbackOptions(
     owner: any /*WeakRef<VideoRecorder>*/,
-    callback: (result?) => void,
+    callback: (result?: RecordResult) => void,
     options?: Options
   ): UIImagePickerControllerDelegateImpl {
     let delegate = new UIImagePickerControllerDelegateImpl();
@@ -162,7 +162,7 @@ class UIImagePickerControllerDelegateImpl extends NSObject
             source,
             (file, error) => {
               if (!error) {
-                this._callback();
+                this._callback({ file: file.path });
               } else {
                 console.log(error.localizedDescription);
               }
