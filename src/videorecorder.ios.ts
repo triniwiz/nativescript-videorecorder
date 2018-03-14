@@ -1,3 +1,5 @@
+import { Options, VideoFormat, CameraPosition } from '.'
+
 import * as frame from 'tns-core-modules/ui/frame';
 import * as fs from 'tns-core-modules/file-system';
 import * as types from 'tns-core-modules/utils/types';
@@ -7,7 +9,7 @@ import './async-await';
 let listener;
 export class VideoRecorder {
   public record(
-    options = {
+    options: Options = {
       saveToGallery: false,
       hd: false,
       format: 'default',
@@ -73,7 +75,6 @@ export class VideoRecorder {
     });
   }
 }
-export type VideoFormat = 'default' | 'mp4';
 class UIImagePickerControllerDelegateImpl extends NSObject
   implements UIImagePickerControllerDelegate {
   public static ObjCProtocols = [UIImagePickerControllerDelegate];
@@ -189,7 +190,6 @@ class UIImagePickerControllerDelegateImpl extends NSObject
     }
   }
 }
-export type CameraPosition = 'front' | 'back';
 export const requestPermissions = function(): Promise<any> {
   return new Promise((resolve, reject) => {
     let authStatus = PHPhotoLibrary.authorizationStatus();
