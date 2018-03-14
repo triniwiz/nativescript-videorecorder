@@ -29,7 +29,7 @@ export enum VideoFormat {
 export abstract class VideoRecorderCommon {
   options: Options;
 
-  constructor(options?: Options) {
+  constructor(options: Options = {}) {
     this.options = Object.assign(
       Object.assign({
         format: VideoFormat.DEFAULT,
@@ -45,8 +45,8 @@ export abstract class VideoRecorderCommon {
   }
 
   // @deprecated Options as argument is deprecated here
-  public record(options?: Options): Promise<RecordResult> {
-    options = Object.assign(this.options, options || {});
+  public record(options: Options = {}): Promise<RecordResult> {
+    options = Object.assign(this.options, options);
 
     return this.requestPermissions(options).catch((err) => {
       throw { event: 'denied' };
