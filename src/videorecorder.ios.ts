@@ -4,27 +4,51 @@ import * as types from 'tns-core-modules/utils/types';
 import { Color } from 'tns-core-modules/color';
 import { View, layout, Property } from 'tns-core-modules/ui/core/view';
 import './async-await';
+
+import {
+  VideoRecorderCommon,
+  Options, VideoFormat, VideoFormatType, CameraPosition, RecordResult,
+} from './videorecorder.common';
+
+export * from './videorecorder.common';
+
 let listener;
-export class VideoRecorder {
-  public record(
-    options = {
-      saveToGallery: false,
-      hd: false,
-      format: 'default',
-      position: 'back',
-      size: 0,
-      duration: 0
-    }
-  ): Promise<any> {
+export class VideoRecorder extends VideoRecorderCommon {
+  public requestPermissions (): Promise<any> {
+    return new Promise((resolve, reject) => {
+      // Permission is only necessary when file needs to be saved in gallery
+      if (!this.options.saveToGallery) return resolve();
+
+      let authStatus = PHPhotoLibrary.authorizationStatus();
+      if (authStatus === PHAuthorizationStatus.NotDetermined) {
+        PHPhotoLibrary.requestAuthorization(auth => {
+          if (auth === PHAuthorizationStatus.Authorized) {
+            resolve();
+          }
+        });
+      } else if (authStatus !== PHAuthorizationStatus.Authorized) {
+        reject();
+      }
+    });
+  }
+
+  public isAvailable() {
+    return UIImagePickerController.isSourceTypeAvailable(UIImagePickerControllerSourceType.Camera);
+  }
+
+  protected _startRecording(options: Options = this.options): Promise<RecordResult> {
     return new Promise((resolve, reject) => {
       listener = null;
       let picker = UIImagePickerController.new();
-      let sourceType = UIImagePickerControllerSourceType.Camera;
       picker.mediaTypes = <any>[kUTTypeMovie];
-      picker.sourceType = sourceType;
-      options.saveToGallery = Boolean(options.saveToGallery) ? true : false;
-      options.hd = Boolean(options.hd) ? true : false;
+      picker.sourceType = UIImagePickerControllerSourceType.Camera;
       picker.cameraCaptureMode = UIImagePickerControllerCameraCaptureMode.Video;
+
+      if (options.position !== CameraPosition.NONE) {
+        picker.cameraDevice = options.position === CameraPosition.FRONT
+          ? UIImagePickerControllerCameraDevice.Front
+          : UIImagePickerControllerCameraDevice.Rear;
+      }
 
       picker.allowsEditing = false;
       picker.videoQuality = options.hd
@@ -35,13 +59,6 @@ export class VideoRecorder {
         types.isNumber(options.duration) && options.duration > 0
           ? Number(options.duration)
           : Number.POSITIVE_INFINITY;
-
-      if (options && options.saveToGallery) {
-        let authStatus = PHPhotoLibrary.authorizationStatus();
-        if (authStatus === PHAuthorizationStatus.Authorized) {
-          options.saveToGallery = true;
-        }
-      }
 
       if (options) {
         listener = UIImagePickerControllerDelegateImpl.initWithOwnerCallbackOptions(
@@ -73,13 +90,12 @@ export class VideoRecorder {
     });
   }
 }
-export type VideoFormat = 'default' | 'mp4';
 class UIImagePickerControllerDelegateImpl extends NSObject
   implements UIImagePickerControllerDelegate {
   public static ObjCProtocols = [UIImagePickerControllerDelegate];
   private _saveToGallery: boolean;
-  private _callback: (result?) => void;
-  private _format: VideoFormat = 'default';
+  private _callback: (result?: RecordResult) => void;
+  private _format: VideoFormatType = VideoFormat.DEFAULT;
   private _hd: boolean;
   public static initWithCallback(
     callback: (result?) => void
@@ -90,8 +106,8 @@ class UIImagePickerControllerDelegateImpl extends NSObject
   }
   public static initWithOwnerCallbackOptions(
     owner: any /*WeakRef<VideoRecorder>*/,
-    callback: (result?) => void,
-    options?: any
+    callback: (result?: RecordResult) => void,
+    options?: Options
   ): UIImagePickerControllerDelegateImpl {
     let delegate = new UIImagePickerControllerDelegateImpl();
     if (options) {
@@ -118,7 +134,7 @@ class UIImagePickerControllerDelegateImpl extends NSObject
       let currentDate: Date = new Date();
       if (this._saveToGallery) {
         let source = info.objectForKey(UIImagePickerControllerMediaURL);
-        if (this._format === 'mp4') {
+        if (this._format === VideoFormat.MP4) {
           let asset = AVAsset.assetWithURL(source);
           let preset = this._hd
             ? AVAssetExportPresetHighestQuality
@@ -150,7 +166,7 @@ class UIImagePickerControllerDelegateImpl extends NSObject
             source,
             (file, error) => {
               if (!error) {
-                this._callback();
+                this._callback({ file: file.path });
               } else {
                 console.log(error.localizedDescription);
               }
@@ -159,7 +175,7 @@ class UIImagePickerControllerDelegateImpl extends NSObject
         }
       } else {
         let source = info.objectForKey(UIImagePickerControllerMediaURL);
-        if (this._format === 'mp4') {
+        if (this._format === VideoFormat.MP4) {
           let asset = AVAsset.assetWithURL(source);
           let preset = this._hd
             ? AVAssetExportPresetHighestQuality
@@ -189,18 +205,3 @@ class UIImagePickerControllerDelegateImpl extends NSObject
     }
   }
 }
-export type CameraPosition = 'front' | 'back';
-export const requestPermissions = function(): Promise<any> {
-  return new Promise((resolve, reject) => {
-    let authStatus = PHPhotoLibrary.authorizationStatus();
-    if (authStatus === PHAuthorizationStatus.NotDetermined) {
-      PHPhotoLibrary.requestAuthorization(auth => {
-        if (auth === PHAuthorizationStatus.Authorized) {
-          resolve();
-        }
-      });
-    } else if (authStatus !== PHAuthorizationStatus.Authorized) {
-      reject();
-    }
-  });
-};

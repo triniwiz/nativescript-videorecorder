@@ -7,11 +7,7 @@ export class HelloWorldModel extends Observable {
     super();
   }
   recorder(options) {
-    const vr = new VideoRecorder();
-    if (options) {
-      return vr.record(options);
-    } else {
-      return vr.record();
-    }
+    const vr = new VideoRecorder(options);
+    return vr.record();
   }
 }

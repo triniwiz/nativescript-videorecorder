@@ -5,7 +5,6 @@ import { Color } from 'tns-core-modules/color';
 import { View, layout, Property } from 'tns-core-modules/ui/core/view';
 import '../async-await';
 import { device } from 'tns-core-modules/platform/platform';
-import { requestPermissions } from '..';
 import * as app from 'tns-core-modules/application';
 import * as permissions from 'nativescript-permissions';
 import * as utils from 'tns-core-modules/utils/utils';

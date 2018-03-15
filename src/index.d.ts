@@ -1,5 +1,6 @@
+import { VideoRecorderCommon } from './videorecorder.common'
+export * from './videorecorder.common'
 
-export declare class VideoRecorder {
-  record(options?: any): Promise<any>;
+export declare class VideoRecorder extends VideoRecorderCommon {
+
 }
-export declare const requestPermissions: (options: any) => Promise<any>;
