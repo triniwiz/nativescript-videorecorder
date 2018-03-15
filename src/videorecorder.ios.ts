@@ -185,7 +185,7 @@ class UIImagePickerControllerDelegateImpl extends NSObject
             preset
           );
           session.outputFileType = AVFileTypeMPEG4;
-          let fileName = `videoCapture_${+new Date()}.mp4`;
+          let fileName = `VID_${+new Date()}.mp4`;
           let path = fs.path.join(fs.knownFolders.documents().path, fileName);
           let nativePath = NSURL.fileURLWithPath(path);
           session.outputURL = nativePath;
