@@ -8,6 +8,7 @@ export declare class AdvancedVideoView extends AdvancedVideoViewBase {
     onLoaded(): void;
     onUnloaded(): void;
     private setCameraPosition(position);
+    private setQuality(quality);
     toggleCamera(): void;
     startRecording(cb: any): void;
     stopRecording(): void;

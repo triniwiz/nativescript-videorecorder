@@ -1,13 +1,5 @@
-import * as frame from 'tns-core-modules/ui/frame';
-import * as fs from 'tns-core-modules/file-system';
-import * as types from 'tns-core-modules/utils/types';
-import { Color } from 'tns-core-modules/color';
-import { View, layout, Property } from 'tns-core-modules/ui/core/view';
+
 import '../async-await';
-import { device } from 'tns-core-modules/platform/platform';
-import * as app from 'tns-core-modules/application';
-import * as permissions from 'nativescript-permissions';
-import * as utils from 'tns-core-modules/utils/utils';
 import {
   AdvancedVideoViewBase,
   cameraPositionProperty,
@@ -83,6 +75,7 @@ export class AdvancedVideoView extends AdvancedVideoViewBase {
       }
     );
     this.nativeView.setListener(new listener());
+    this.setQuality(this.quality)
     this.setCameraPosition(this.cameraPosition);
   }
   onLoaded() {
@@ -120,51 +113,56 @@ export class AdvancedVideoView extends AdvancedVideoViewBase {
   [saveToGalleryProperty.setNative](save: boolean) {
     return save;
   }
+  private setQuality(quality){
+      let q;
+      if (quality && quality.valueof === 'function') {
+          q = quality.valueof();
+      } else {
+          q = quality;
+      }
+      switch (q) {
+          case Quality.MAX_720P.toString():
+              this.nativeView.setQuality(
+                  co.fitcom.fancycamera.FancyCamera.Quality.MAX_720P.getValue()
+              );
+              break;
+          case Quality.MAX_1080P.toString():
+              this.nativeView.setQuality(
+                  co.fitcom.fancycamera.FancyCamera.Quality.MAX_1080P.getValue()
+              );
+              break;
+          case Quality.MAX_2160P.toString():
+              this.nativeView.setQuality(
+                  co.fitcom.fancycamera.FancyCamera.Quality.MAX_2160P.getValue()
+              );
+              break;
+          case Quality.HIGHEST.toString():
+              this.nativeView.setQuality(
+                  co.fitcom.fancycamera.FancyCamera.Quality.HIGHEST.getValue()
+              );
+              break;
+          case Quality.LOWEST.toString():
+              this.nativeView.setQuality(
+                  co.fitcom.fancycamera.FancyCamera.Quality.LOWEST.getValue()
+              );
+              break;
+          case Quality.QVGA.toString():
+              this.nativeView.setQuality(
+                  co.fitcom.fancycamera.FancyCamera.Quality.QVGA.getValue()
+              );
+              break;
+          default:
+              this.nativeView.setQuality(
+                  co.fitcom.fancycamera.FancyCamera.Quality.MAX_480P.getValue()
+              );
+              break;
+      }
+  }
+
+
   [qualityProperty.setNative](quality) {
     if (!quality) return quality;
-    let q;
-    if (quality && quality.valueof === 'function') {
-      q = quality.valueof();
-    } else {
-      q = quality;
-    }
-    switch (q) {
-      case Quality.MAX_720P.toString():
-        this.nativeView.setQuality(
-          co.fitcom.fancycamera.FancyCamera.Quality.MAX_720P.getValue()
-        );
-        break;
-      case Quality.MAX_1080P.toString():
-        this.nativeView.setQuality(
-          co.fitcom.fancycamera.FancyCamera.Quality.MAX_1080P.getValue()
-        );
-        break;
-      case Quality.MAX_2160P.toString():
-        this.nativeView.setQuality(
-          co.fitcom.fancycamera.FancyCamera.Quality.MAX_2160P.getValue()
-        );
-        break;
-      case Quality.HIGHEST.toString():
-        this.nativeView.setQuality(
-          co.fitcom.fancycamera.FancyCamera.Quality.HIGHEST.getValue()
-        );
-        break;
-      case Quality.LOWEST.toString():
-        this.nativeView.setQuality(
-          co.fitcom.fancycamera.FancyCamera.Quality.LOWEST.getValue()
-        );
-        break;
-      case Quality.QVGA.toString():
-        this.nativeView.setQuality(
-          co.fitcom.fancycamera.FancyCamera.Quality.QVGA.getValue()
-        );
-        break;
-      default:
-        this.nativeView.setQuality(
-          co.fitcom.fancycamera.FancyCamera.Quality.MAX_480P.getValue()
-        );
-        break;
-    }
+    this.setQuality(this.quality)
     return quality;
   }
 
