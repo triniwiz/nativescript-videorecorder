@@ -83,6 +83,8 @@ export class AdvancedVideoView extends AdvancedVideoViewBase {
                             });
                         }
                     }
+                },
+                onPhotoEventUI(event: co.fitcom.fancycamera.PhotoEvent) {
                 }
             }
         );
