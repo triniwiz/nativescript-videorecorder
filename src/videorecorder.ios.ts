@@ -32,7 +32,7 @@ export class VideoRecorder extends VideoRecorderCommon {
     });
   }
 
-  public isAvailable() {
+  public static isAvailable() {
     return UIImagePickerController.isSourceTypeAvailable(UIImagePickerControllerSourceType.Camera);
   }
 

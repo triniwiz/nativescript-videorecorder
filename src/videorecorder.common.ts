@@ -57,7 +57,7 @@ export abstract class VideoRecorderCommon {
     return Promise.resolve();
   }
 
-  public isAvailable(): boolean {
+  public static isAvailable(): boolean {
     return false;
   }
 

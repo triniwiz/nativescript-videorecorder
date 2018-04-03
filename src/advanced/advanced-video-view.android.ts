@@ -20,6 +20,10 @@ export class AdvancedVideoView extends AdvancedVideoViewBase {
 
     private durationInterval: any;
 
+    public static isAvailable() {
+        return app.android.currentContext.getPackageManager().hasSystemFeature(android.content.pm.PackageManager.FEATURE_CAMERA);
+    }
+
     public createNativeView() {
         app.android.on(app.AndroidApplication.activityRequestPermissionsEvent, (args: app.AndroidActivityRequestPermissionsEventData) => {
             const grantResults = args.grantResults;
