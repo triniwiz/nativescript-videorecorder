@@ -27,7 +27,7 @@ export class AdvancedVideoView extends AdvancedVideoViewBase {
     public createNativeView() {
         app.android.on(app.AndroidApplication.activityRequestPermissionsEvent, (args: app.AndroidActivityRequestPermissionsEventData) => {
             const grantResults = args.grantResults;
-            if (grantResults[0] == android.content.pm.PackageManager.PERMISSION_GRANTED && grantResults[1] == android.content.pm.PackageManager.PERMISSION_GRANTED) {
+            if (grantResults[0] === android.content.pm.PackageManager.PERMISSION_GRANTED && grantResults[1] === android.content.pm.PackageManager.PERMISSION_GRANTED) {
                 this.startPreview();
                 app.android.off(app.AndroidApplication.activityRequestPermissionsEvent);
             }
@@ -188,7 +188,7 @@ export class AdvancedVideoView extends AdvancedVideoViewBase {
 
     [qualityProperty.setNative](quality) {
         if (!quality) return quality;
-        this.setQuality(this.quality)
+        this.setQuality(this.quality);
         return quality;
     }
 

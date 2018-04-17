@@ -3,6 +3,7 @@ import { AdvancedVideoViewBase } from './advanced-video-view.common';
 export declare class AdvancedVideoView extends AdvancedVideoViewBase {
     readonly duration: any;
     private durationInterval;
+    static isAvailable(): any;
     createNativeView(): co.fitcom.fancycamera.FancyCamera;
     initNativeView(): void;
     onLoaded(): void;

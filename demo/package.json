@@ -2,10 +2,10 @@
   "nativescript": {
     "id": "org.nativescript.demo",
     "tns-android": {
-      "version": "3.4.1"
+      "version": "4.0.0"
     },
     "tns-ios": {
-      "version": "3.4.1"
+      "version": "4.0.1"
     }
   },
   "dependencies": {
@@ -13,7 +13,7 @@
     "nativescript-unit-test-runner": "^0.3.4",
     "nativescript-videoplayer": "^3.1.0",
     "nativescript-videorecorder": "file:../src",
-    "tns-core-modules": "^3.4.0"
+    "tns-core-modules": "^4.0.0"
   },
   "devDependencies": {
     "awesome-typescript-loader": "~3.1.3",

@@ -1,4 +1,4 @@
-import { View, Property } from 'tns-core-modules/ui/core/view';
+import { Property, View } from 'tns-core-modules/ui/core/view';
 export declare enum CameraPosition {
     BACK = "back",
     FRONT = "front",
@@ -17,6 +17,7 @@ export declare class AdvancedVideoViewBase extends View {
     cameraPosition: CameraPositionType;
     saveToGallery: boolean;
     quality: Quality;
+    static isAvailable(): boolean;
 }
 export declare const qualityProperty: Property<AdvancedVideoViewBase, any>;
 export declare const cameraPositionProperty: Property<AdvancedVideoViewBase, CameraPositionType>;

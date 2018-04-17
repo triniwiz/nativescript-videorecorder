@@ -1,21 +1,13 @@
-android {
-	productFlavors {
-		"nativescript-videorecorder" {
-			dimension "nativescript-videorecorder"
-		}
-	}
-}
-
 repositories {
     maven {
         url 'https://dl.bintray.com/triniwiz/maven/'
     }
-maven {
-            url 'https://maven.google.com'
-        }
+    maven {
+        url 'https://maven.google.com'
+    }
 }
 
 dependencies {
-	compile 'co.fitcom:fancycamera:0.+'
+    compile 'co.fitcom:fancycamera:0.+'
 }
 
