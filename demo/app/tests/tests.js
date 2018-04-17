@@ -1,5 +1,5 @@
-var Videorecorder = require("nativescript-videorecorder").Videorecorder;
-var videorecorder = new Videorecorder();
+var Videorecorder = require("nativescript-videorecorder").VideoRecorder;
+var videorecorder = new VideoRecorder();
 
 describe("greet function", function() {
     it("exists", function() {
