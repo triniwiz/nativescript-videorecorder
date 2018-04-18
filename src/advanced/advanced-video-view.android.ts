@@ -10,12 +10,23 @@ import {
 import { fromObject } from 'tns-core-modules/data/observable';
 // declare const com;
 import * as app from 'tns-core-modules/application';
+import * as permissions from 'nativescript-permissions';
 
 export class AdvancedVideoView extends AdvancedVideoViewBase {
     get duration() {
         return this.nativeView && this.nativeView.getDuration()
             ? this.nativeView.getDuration()
             : 0;
+    }
+
+    public static requestPermissions(explanation = ''): Promise<any> {
+        return permissions.requestPermissions(
+            [
+                (android as any).Manifest.permission.CAMERA,
+                (android as any).Manifest.permission.RECORD_AUDIO
+            ],
+            explanation && explanation.length > 0 ? explanation : ''
+        );
     }
 
     private durationInterval: any;

@@ -1,9 +1,19 @@
 import { AdvancedVideoViewBase } from './advanced-video-view.common';
+
 export declare class AdvancedVideoView extends AdvancedVideoViewBase {
-  readonly duration: number;
-  startRecording(): void;
-  stopRecording(): void;
-  stopPreview(): void;
-  toggleCamera(): void;
-  startPreview(): void;
+    readonly duration: number;
+
+    public startRecording(): void;
+
+    public stopRecording(): void;
+
+    public stopPreview(): void;
+
+    public toggleCamera(): void;
+
+    public startPreview(): void;
+
+    public static requestPermissions(explanation?: string): Promise<any>;
+
+    public static isAvailable(): boolean;
 }

@@ -62,6 +62,21 @@ export class AdvancedVideoView extends AdvancedVideoViewBase {
     _file: NSURL;
     private session: AVCaptureSession;
 
+    private requestStoragePermission(): Promise<any> {
+        return new Promise((resolve, reject) => {
+            let authStatus = PHPhotoLibrary.authorizationStatus();
+            if (authStatus === PHAuthorizationStatus.NotDetermined) {
+                PHPhotoLibrary.requestAuthorization(auth => {
+                    if (auth === PHAuthorizationStatus.Authorized) {
+                        resolve();
+                    }
+                });
+            } else if (authStatus !== PHAuthorizationStatus.Authorized) {
+                reject();
+            }
+        });
+    }
+
     public static isAvailable() {
         return UIImagePickerController.isSourceTypeAvailable(UIImagePickerControllerSourceType.Camera);
     }

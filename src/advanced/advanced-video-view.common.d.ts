@@ -1,4 +1,5 @@
 import { Property, View } from 'tns-core-modules/ui/core/view';
+import { Options } from '../videorecorder.common';
 export declare enum CameraPosition {
     BACK = "back",
     FRONT = "front",
@@ -18,6 +19,7 @@ export declare class AdvancedVideoViewBase extends View {
     saveToGallery: boolean;
     quality: Quality;
     static isAvailable(): boolean;
+    static requestPermissions(options?: Options): Promise<any>;
 }
 export declare const qualityProperty: Property<AdvancedVideoViewBase, any>;
 export declare const cameraPositionProperty: Property<AdvancedVideoViewBase, CameraPositionType>;

@@ -25,6 +25,10 @@ export class AdvancedVideoViewBase extends View {
     public static isAvailable(): boolean {
         return false;
     }
+
+    public static requestPermissions(explanation?: string): Promise<any> {
+        return Promise.resolve();
+    }
 }
 
 export const qualityProperty = new Property<AdvancedVideoViewBase, any>({
