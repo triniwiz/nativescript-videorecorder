@@ -37,15 +37,13 @@ export class AdvancedVideoView extends AdvancedVideoViewBase {
 
     public createNativeView() {
         app.android.on(app.AndroidApplication.activityRequestPermissionsEvent, (args: app.AndroidActivityRequestPermissionsEventData) => {
-            const grantResults = args.grantResults;
-            if (grantResults[0] === android.content.pm.PackageManager.PERMISSION_GRANTED && grantResults[1] === android.content.pm.PackageManager.PERMISSION_GRANTED) {
+            if(permissions.hasPermission((android as any).Manifest.permission.CAMERA) && permissions.hasPermission((android as any).Manifest.permission.RECORD_AUDIO)){
                 this.startPreview();
                 app.android.off(app.AndroidApplication.activityRequestPermissionsEvent);
             }
 
         });
-        const nativeView = new co.fitcom.fancycamera.FancyCamera(this._context);
-        return nativeView;
+        return new co.fitcom.fancycamera.FancyCamera(this._context);
     }
 
     public initNativeView() {

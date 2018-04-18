@@ -13,7 +13,7 @@ const RESULT_OK = -1;
 const REQUEST_VIDEO_CAPTURE = 999;
 
 export class VideoRecorder extends VideoRecorderCommon {
-    public static requestPermissions(options?: Options): Promise<void> {
+    public requestPermissions(options?: Options): Promise<void> {
         return permissions.requestPermissions(
             [
                 (android as any).Manifest.permission.CAMERA,
@@ -27,7 +27,7 @@ export class VideoRecorder extends VideoRecorderCommon {
         return app.android.currentContext.getPackageManager().hasSystemFeature(android.content.pm.PackageManager.FEATURE_CAMERA);
     }
 
-    protected _startRecording(options: Options = VideoRecorder.options): Promise<RecordResult> {
+    protected _startRecording(options: Options = this.options): Promise<RecordResult> {
         return new Promise((resolve, reject) => {
             let data = null;
             let file;

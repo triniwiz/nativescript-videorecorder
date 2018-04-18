@@ -17,7 +17,7 @@ export * from './videorecorder.common';
 let listener;
 
 export class VideoRecorder extends VideoRecorderCommon {
-    public static requestPermissions(options?: Options): Promise<any> {
+    public requestPermissions(options?: Options): Promise<any> {
         return new Promise((resolve, reject) => {
             // Permission is only necessary when file needs to be saved in gallery
             if (!options.saveToGallery) return resolve();
@@ -39,7 +39,7 @@ export class VideoRecorder extends VideoRecorderCommon {
         return UIImagePickerController.isSourceTypeAvailable(UIImagePickerControllerSourceType.Camera);
     }
 
-    protected _startRecording(options: Options = VideoRecorder.options): Promise<RecordResult> {
+    protected _startRecording(options: Options = this.options): Promise<RecordResult> {
         return new Promise((resolve, reject) => {
             listener = null;
             let picker = UIImagePickerController.new();
