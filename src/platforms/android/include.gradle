@@ -8,6 +8,6 @@ repositories {
 }
 
 dependencies {
-    compile 'co.fitcom:fancycamera:0.+'
+    compile 'co.fitcom:fancycamera:0.3.1'
 }
 

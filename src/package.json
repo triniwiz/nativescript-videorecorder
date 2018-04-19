@@ -1,6 +1,6 @@
 {
   "name": "nativescript-videorecorder",
-  "version": "3.0.0-alpha.9",
+  "version": "3.0.0-alpha.10",
   "description": "NativeScript videorecording plugin",
   "main": "videorecorder",
   "typings": "index.d.ts",

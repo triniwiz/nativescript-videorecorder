@@ -134,6 +134,7 @@ declare namespace co {
         public onSurfaceTextureUpdated(param0: androidgraphicsSurfaceTexture): void;
         public constructor(param0: androidcontentContext, param1: androidutilAttributeSet);
         public stopRecording(): void;
+        public release(): void;
       }
       export namespace FancyCamera {
         export class CameraPosition {

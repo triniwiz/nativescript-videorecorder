@@ -37,7 +37,7 @@ export class AdvancedVideoView extends AdvancedVideoViewBase {
 
     public createNativeView() {
         app.android.on(app.AndroidApplication.activityRequestPermissionsEvent, (args: app.AndroidActivityRequestPermissionsEventData) => {
-            if(permissions.hasPermission((android as any).Manifest.permission.CAMERA) && permissions.hasPermission((android as any).Manifest.permission.RECORD_AUDIO)){
+            if (permissions.hasPermission((android as any).Manifest.permission.CAMERA) && permissions.hasPermission((android as any).Manifest.permission.RECORD_AUDIO)) {
                 this.startPreview();
                 app.android.off(app.AndroidApplication.activityRequestPermissionsEvent);
             }
@@ -106,18 +106,20 @@ export class AdvancedVideoView extends AdvancedVideoViewBase {
         this.setCameraPosition(this.cameraPosition);
     }
 
-    onLoaded() {
+    public onLoaded(): void {
         super.onLoaded();
         this.startPreview();
     }
 
-    onUnloaded() {
-        this.stopPreview();
-        super.onUnloaded();
+    public onUnloaded(): void {
+        if (this.nativeView && this.nativeView.release) {
+            this.nativeView.release();
+        }
         app.android.off(app.AndroidApplication.activityRequestPermissionsEvent);
+        super.onUnloaded();
     }
 
-    private setCameraPosition(position) {
+    private setCameraPosition(position): void {
         switch (position) {
             case CameraPosition.FRONT:
                 this.nativeView.setCameraPosition(1);
