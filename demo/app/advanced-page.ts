@@ -1,7 +1,7 @@
 import * as pages from 'tns-core-modules/ui/page';
 import { HelloWorldModel } from './main-view-model';
 import { topmost } from 'tns-core-modules/ui/frame';
-import { AdvancedVideoView } from 'nativescript-videorecorder/advanced'
+import { AdvancedVideoView } from 'nativescript-videorecorder/advanced';
 let page;
 let vm = new HelloWorldModel();
 let recorder;
