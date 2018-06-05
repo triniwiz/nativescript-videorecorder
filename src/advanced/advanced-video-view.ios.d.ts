@@ -18,5 +18,6 @@ export declare class AdvancedVideoView extends AdvancedVideoViewBase {
     stopPreview(): void;
     toggleCamera(): void;
     startPreview(): void;
+    onLayout(left: number, top: number, right: number, bottom: number): void;
     onMeasure(widthMeasureSpec: number, heightMeasureSpec: number): void;
 }
