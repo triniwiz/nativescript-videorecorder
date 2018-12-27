@@ -1,6 +1,6 @@
 {
   "nativescript": {
-    "id": "org.nativescript.demo",
+    "id": "co.fitcom.nativescript.demo",
     "tns-android": {
       "version": "4.1.1"
     },
