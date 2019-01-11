@@ -11,8 +11,9 @@ import { fromObject } from 'tns-core-modules/data/observable';
 // declare const com;
 import * as app from 'tns-core-modules/application';
 import * as permissions from 'nativescript-permissions';
-
+let MediaMetadataRetriever = android.media.MediaMetadataRetriever;
 export class AdvancedVideoView extends AdvancedVideoViewBase {
+    thumbnails: any[];
     get duration() {
         return this.nativeView && this.nativeView.getDuration()
             ? this.nativeView.getDuration()
@@ -49,6 +50,7 @@ export class AdvancedVideoView extends AdvancedVideoViewBase {
     public initNativeView() {
         super.initNativeView();
         const ref = new WeakRef(this);
+        let that = this;
         const listener = (co as any).fitcom.fancycamera.CameraEventListenerUI.extend(
             {
                 onVideoEventUI(event: co.fitcom.fancycamera.VideoEvent) {
@@ -61,6 +63,9 @@ export class AdvancedVideoView extends AdvancedVideoViewBase {
                                 co.fitcom.fancycamera.VideoEvent.EventInfo.RECORDING_FINISHED.toString()
                             ) > -1
                     ) {
+                        if (that.thumbnailCount && that.thumbnailCount > 0) {
+                            that.extractThumbnails(event.getFile().getPath());
+                        }
                         owner.notify({
                             eventName: 'finished',
                             object: fromObject({
@@ -225,5 +230,66 @@ export class AdvancedVideoView extends AdvancedVideoViewBase {
         if (this.nativeView) {
             this.nativeView.stop();
         }
+    }
+
+    extractThumbnails(file) {
+        this.thumbnails = [];
+        console.log("file", file);
+        let mediaMetadataRetriever = new MediaMetadataRetriever();
+
+        mediaMetadataRetriever.setDataSource(file);
+        let METADATA_KEY_DURATION = mediaMetadataRetriever.extractMetadata(
+            MediaMetadataRetriever.METADATA_KEY_DURATION
+        );
+
+        let max = parseInt(METADATA_KEY_DURATION.toString());
+
+        let it = parseInt((max / this.thumbnailCount).toString());
+
+        for (let index = 0; index < this.thumbnailCount; index++) {
+            let bmpOriginal = mediaMetadataRetriever.getFrameAtTime(
+                index * it * 1000,
+                MediaMetadataRetriever.OPTION_CLOSEST
+            );
+            let byteCount = bmpOriginal.getWidth() * bmpOriginal.getHeight() * 4;
+            let tmpByteBuffer = java.nio.ByteBuffer.allocate(byteCount);
+            bmpOriginal.copyPixelsToBuffer(tmpByteBuffer);
+            let quality = 100;
+
+            let outputFilePath =
+                file.substr(0, file.lastIndexOf(".")) +
+                "_thumbnail_" +
+                index +
+                ".png";
+            let outputFile = new java.io.File(outputFilePath);
+            let outputStream = null;
+
+            try {
+                outputStream = new java.io.FileOutputStream(outputFile);
+            } catch (e) {
+                console.log(e);
+            }
+
+            let bmpScaledSize = android.graphics.Bitmap.createScaledBitmap(
+                bmpOriginal,
+                bmpOriginal.getWidth(),
+                bmpOriginal.getHeight(),
+                false
+            );
+            bmpScaledSize.compress(
+                android.graphics.Bitmap.CompressFormat.PNG,
+                quality,
+                outputStream
+            );
+
+            try {
+                outputStream.close();
+                this.thumbnails.push(outputFilePath);
+            } catch (e) {
+                console.log(e);
+            }
+        }
+
+        mediaMetadataRetriever.release();
     }
 }

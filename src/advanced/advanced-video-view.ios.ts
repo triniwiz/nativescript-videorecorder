@@ -62,6 +62,9 @@ export class AdvancedVideoView extends AdvancedVideoViewBase {
     _output: AVCaptureMovieFileOutput;
     _file: NSURL;
     private session: AVCaptureSession;
+    public thumbnails: string[];
+    _fileName: string;
+    folder;
 
     private requestStoragePermission(): Promise<any> {
         return new Promise((resolve, reject) => {
@@ -154,8 +157,9 @@ export class AdvancedVideoView extends AdvancedVideoViewBase {
                 this._output.setOutputSettingsForConnection(<any>codec, connection);
             }
             let format = '.mp4'; // options && options.format === 'default' ? '.mov' : '.' + options.format;
-            let fileName = `VID_${+new Date()}${format}`;
-            let path = fs.path.join(fs.knownFolders.temp().path, fileName);
+            this._fileName = `VID_${+new Date()}${format}`;
+            this.folder = fs.knownFolders.temp().getFolder(Date.now().toString());
+            let path = fs.path.join(this.folder.path, this._fileName);
             this._file = NSURL.fileURLWithPath(path);
 
             if (!input) {
@@ -223,7 +227,7 @@ export class AdvancedVideoView extends AdvancedVideoViewBase {
                 this.session
             );
             dispatch_async(dispatch_get_current_queue(), () => {
-                preview.videoGravity = AVLayerVideoGravityResizeAspect;
+                preview.videoGravity = this.fill ? AVLayerVideoGravityResizeAspectFill : AVLayerVideoGravityResizeAspect;
             });
             if (!this.session.running) {
                 this.session.startRunning();
@@ -255,10 +259,15 @@ export class AdvancedVideoView extends AdvancedVideoViewBase {
 
     public stopRecording(): void {
         this.session.stopRunning();
+        if (this.thumbnailCount && this.thumbnailCount > 0) {
+            this.extractThumbnails();
+        }
     }
 
     public stopPreview(): void {
-        this.session.stopRunning();
+        if (this.session.running) {
+            this.session.stopRunning();
+        }
     }
 
     public toggleCamera(): void {
@@ -287,5 +296,49 @@ export class AdvancedVideoView extends AdvancedVideoViewBase {
         const width = layout.getMeasureSpecSize(widthMeasureSpec);
         const height = layout.getMeasureSpecSize(heightMeasureSpec);
         this.setMeasuredDimension(width, height);
+    }
+
+    private extractThumbnails() {
+        this.thumbnails = [];
+        let asset = AVURLAsset.alloc().initWithURLOptions(
+            this._file,
+            null
+        );
+        let assetIG = AVAssetImageGenerator.alloc().initWithAsset(asset);
+        assetIG.appliesPreferredTrackTransform = true;
+        assetIG.apertureMode = AVAssetImageGeneratorApertureModeEncodedPixels;
+        let it = parseInt((asset.duration.value / this.thumbnailCount).toString());
+
+        for (let index = 0; index < this.thumbnailCount; index++) {
+            let thumbnailImageRef = assetIG.copyCGImageAtTimeActualTimeError(
+                CMTimeMake(it * index, asset.duration.timescale),
+                null
+            );
+
+            if (!thumbnailImageRef) {
+                console.log("Thumbnail Image Generation Error");
+            }
+
+            let image = UIImage.alloc().initWithCGImage(thumbnailImageRef);
+
+
+            let outputFilePath =
+                this._fileName.substr(0, this._fileName.lastIndexOf(".")) +
+                "_thumb_" +
+                index +
+                ".png";
+
+            let path = fs.path.join(this.folder.path, outputFilePath);
+            let ok = UIImagePNGRepresentation(image).writeToFileAtomically(
+                path,
+                true
+            );
+
+            if (!ok) {
+                console.log("Could not write thumbnail to file");
+            } else {
+                this.thumbnails.push(path);
+            }
+        }
     }
 }

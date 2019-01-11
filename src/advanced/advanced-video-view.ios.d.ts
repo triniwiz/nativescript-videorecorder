@@ -5,6 +5,9 @@ export declare class AdvancedVideoView extends AdvancedVideoViewBase {
     _output: AVCaptureMovieFileOutput;
     _file: NSURL;
     private session;
+    thumbnails: string[];
+    _fileName: string;
+    folder: any;
     private requestStoragePermission();
     static isAvailable(): boolean;
     createNativeView(): UIView;
@@ -20,4 +23,5 @@ export declare class AdvancedVideoView extends AdvancedVideoViewBase {
     startPreview(): void;
     onLayout(left: number, top: number, right: number, bottom: number): void;
     onMeasure(widthMeasureSpec: number, heightMeasureSpec: number): void;
+    private extractThumbnails();
 }

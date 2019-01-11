@@ -25,6 +25,7 @@ export function loaded(args: pages.NavigatedData) {
     recorder.on('finished', args => {
         clearInterval(interval);
         page.bindingContext.set('selectedVideo', args.object.get('file'));
+        console.log("thumbnails: ", recorder.thumbnails);
     });
 }
 

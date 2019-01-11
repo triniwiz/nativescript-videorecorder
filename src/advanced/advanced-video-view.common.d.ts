@@ -17,9 +17,13 @@ export declare class AdvancedVideoViewBase extends View {
     cameraPosition: CameraPositionType;
     saveToGallery: boolean;
     quality: Quality;
+    thumbnailCount: number;
+    fill: boolean;
     static isAvailable(): boolean;
     static requestPermissions(explanation?: string): Promise<any>;
 }
+export declare const fillProperty: Property<AdvancedVideoViewBase, boolean>;
+export declare const thumbnailCountProperty: Property<AdvancedVideoViewBase, number>;
 export declare const qualityProperty: Property<AdvancedVideoViewBase, any>;
 export declare const cameraPositionProperty: Property<AdvancedVideoViewBase, CameraPositionType>;
 export declare const saveToGalleryProperty: Property<AdvancedVideoViewBase, boolean>;
