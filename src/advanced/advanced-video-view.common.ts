@@ -21,6 +21,8 @@ export class AdvancedVideoViewBase extends View {
     cameraPosition: CameraPositionType;
     saveToGallery: boolean;
     quality: Quality;
+    thumbnailCount: number;
+    fill: boolean;
 
     public static isAvailable(): boolean {
         return false;
@@ -30,23 +32,32 @@ export class AdvancedVideoViewBase extends View {
         return Promise.resolve();
     }
 }
-
+export const fillProperty = new Property<AdvancedVideoViewBase, boolean>({
+    name: 'fill',
+    defaultValue: false
+});
+export const thumbnailCountProperty = new Property<AdvancedVideoViewBase, number>({
+    name: 'thumbnailCount',
+    defaultValue: 1
+});
 export const qualityProperty = new Property<AdvancedVideoViewBase, any>({
     name: 'quality',
     defaultValue: Quality.MAX_480P
 });
 export const cameraPositionProperty = new Property<AdvancedVideoViewBase,
     CameraPositionType>({
-    name: 'cameraPosition',
-    defaultValue: 'back'
-});
+        name: 'cameraPosition',
+        defaultValue: 'back'
+    });
 
 export const saveToGalleryProperty = new Property<AdvancedVideoViewBase,
     boolean>({
-    name: 'saveToGallery',
-    defaultValue: false
-});
+        name: 'saveToGallery',
+        defaultValue: false
+    });
 
 qualityProperty.register(AdvancedVideoViewBase);
 cameraPositionProperty.register(AdvancedVideoViewBase);
 saveToGalleryProperty.register(AdvancedVideoViewBase);
+fillProperty.register(AdvancedVideoViewBase);
+thumbnailCountProperty.register(AdvancedVideoViewBase);

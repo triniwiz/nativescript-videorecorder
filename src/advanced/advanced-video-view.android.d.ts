@@ -1,6 +1,7 @@
 import '../async-await';
 import { AdvancedVideoViewBase } from './advanced-video-view.common';
 export declare class AdvancedVideoView extends AdvancedVideoViewBase {
+    thumbnails: any[];
     readonly duration: any;
     static requestPermissions(explanation?: string): Promise<any>;
     private durationInterval;
@@ -16,4 +17,5 @@ export declare class AdvancedVideoView extends AdvancedVideoViewBase {
     stopRecording(): void;
     startPreview(): void;
     stopPreview(): void;
+    extractThumbnails(file: any): void;
 }
