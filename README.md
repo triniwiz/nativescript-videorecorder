@@ -85,6 +85,8 @@ Promises above can be rejected with:
 
 ## AdvancedVideoView
 
+AdvancedVideoView does not open the device camera application, but rather allows you to embed the camera view in your app. You can then add buttons over it to start/stop recording. It allows for a deeper level of UI customization.
+
 ```xml
 <Page xmlns="http://schemas.nativescript.org/tns.xsd" xmlns:recorder="nativescript-videorecorder/advanced">
 <recorder:AdvancedVideoView quality="highest" cameraPosition="front" id="camera"/>
