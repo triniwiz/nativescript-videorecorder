@@ -12,6 +12,7 @@ import { fromObject } from 'tns-core-modules/data/observable';
 import * as app from 'tns-core-modules/application';
 import * as permissions from 'nativescript-permissions';
 let MediaMetadataRetriever = android.media.MediaMetadataRetriever;
+
 export class AdvancedVideoView extends AdvancedVideoViewBase {
     thumbnails: any[];
     get duration() {
@@ -53,6 +54,8 @@ export class AdvancedVideoView extends AdvancedVideoViewBase {
         let that = this;
         const listener = (co as any).fitcom.fancycamera.CameraEventListenerUI.extend(
             {
+                onCameraOpenUI() {},
+                onCameraCloseUI() {},
                 onVideoEventUI(event: co.fitcom.fancycamera.VideoEvent) {
                     const owner = ref.get();
                     if (
@@ -109,6 +112,7 @@ export class AdvancedVideoView extends AdvancedVideoViewBase {
         this.nativeView.setListener(new listener());
         this.setQuality(this.quality);
         this.setCameraPosition(this.cameraPosition);
+        this.nativeView.setCameraOrientation(2);
     }
 
     public onLoaded(): void {
@@ -212,7 +216,7 @@ export class AdvancedVideoView extends AdvancedVideoViewBase {
         this.nativeView.toggleCamera();
     }
 
-    public startRecording(cb): void {
+    public startRecording(): void {
         this.nativeView.startRecording();
     }
 
