@@ -1,9 +1,18 @@
 import '../async-await';
 import { AdvancedVideoViewBase } from './advanced-video-view.common';
+export * from './advanced-video-view.common';
+export declare enum NativeOrientation {
+    Unknown = 0,
+    Portrait = 1,
+    PortraitUpsideDown = 2,
+    LandscapeLeft = 3,
+    LandscapeRight = 4,
+}
 export declare class AdvancedVideoView extends AdvancedVideoViewBase {
     nativeView: UIView;
     _output: AVCaptureMovieFileOutput;
     _file: NSURL;
+    _connection: AVCaptureConnection;
     private session;
     thumbnails: string[];
     _fileName: string;
@@ -15,6 +24,7 @@ export declare class AdvancedVideoView extends AdvancedVideoViewBase {
     onLoaded(): void;
     onUnloaded(): void;
     readonly duration: number;
+    private _setOutputOrientation(orientation);
     private openCamera();
     startRecording(): void;
     stopRecording(): void;

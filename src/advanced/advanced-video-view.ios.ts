@@ -1,8 +1,26 @@
 import * as fs from 'tns-core-modules/file-system';
 import { layout } from 'tns-core-modules/ui/core/view';
 import '../async-await';
-import { AdvancedVideoViewBase, CameraPosition, Quality, saveToGalleryProperty } from './advanced-video-view.common';
+import {
+    AdvancedVideoViewBase,
+    CameraPosition,
+    Quality,
+    saveToGalleryProperty,
+    Orientation,
+    outputOrientation,
+} from './advanced-video-view.common';
+
+export * from './advanced-video-view.common';
+
 import { fromObject } from 'tns-core-modules/data/observable';
+
+export enum NativeOrientation {
+    Unknown,
+    Portrait,
+    PortraitUpsideDown,
+    LandscapeLeft,
+    LandscapeRight,
+}
 
 @ObjCClass(AVCaptureFileOutputRecordingDelegate)
 class AVCaptureFileOutputRecordingDelegateImpl extends NSObject
@@ -61,6 +79,7 @@ export class AdvancedVideoView extends AdvancedVideoViewBase {
     nativeView: UIView;
     _output: AVCaptureMovieFileOutput;
     _file: NSURL;
+    _connection: AVCaptureConnection;
     private session: AVCaptureSession;
     public thumbnails: string[];
     _fileName: string;
@@ -114,12 +133,50 @@ export class AdvancedVideoView extends AdvancedVideoViewBase {
         }
     }
 
+    [outputOrientation.getDefault](): Orientation {
+        if (!this._connection) return Orientation.Unknown;
+        return Orientation[NativeOrientation[this._connection.videoOrientation]];
+    }
+
+    [outputOrientation.setNative](orientation: Orientation) {
+        this._setOutputOrientation(orientation);
+    }
+
     [saveToGalleryProperty.getDefault]() {
         return false;
     }
 
     [saveToGalleryProperty.setNative](save: boolean) {
         return save;
+    }
+
+    private _setOutputOrientation(orientation: Orientation) {
+        let nativeOrientation: number;
+        switch (orientation) {
+            case Orientation.LandscapeLeft:
+                nativeOrientation = NativeOrientation.LandscapeLeft;
+                break;
+            case Orientation.LandscapeRight:
+                nativeOrientation = NativeOrientation.LandscapeRight;
+                break;
+            case Orientation.Portrait:
+                nativeOrientation = NativeOrientation.Portrait;
+                break;
+            case Orientation.PortraitUpsideDown:
+                nativeOrientation = NativeOrientation.PortraitUpsideDown;
+                break;
+            default:
+                nativeOrientation = NativeOrientation.Unknown;
+                break;
+        }
+
+        if (
+            this._connection &&
+            this._connection.supportsVideoOrientation &&
+            nativeOrientation !== NativeOrientation.Unknown
+        ) {
+            this._connection.videoOrientation = nativeOrientation;
+        }
     }
 
     private openCamera(): void {
@@ -150,11 +207,14 @@ export class AdvancedVideoView extends AdvancedVideoViewBase {
 
             this._output = AVCaptureMovieFileOutput.alloc().init();
             this._output.movieFragmentInterval = kCMTimeInvalid;
-            let connection = this._output.connectionWithMediaType(AVMediaTypeVideo);
+            this._connection =  this._output.connectionWithMediaType(AVMediaTypeVideo);
+
+            this._setOutputOrientation(this.outputOrientation);
+
             if (this._output.availableVideoCodecTypes.containsObject(AVVideoCodecTypeH264)) {
                 const codec = {};
                 codec[AVVideoCodecKey] = AVVideoCodecTypeH264;
-                this._output.setOutputSettingsForConnection(<any>codec, connection);
+                this._output.setOutputSettingsForConnection(<any>codec, this._connection);
             }
             let format = '.mp4'; // options && options.format === 'default' ? '.mov' : '.' + options.format;
             this._fileName = `VID_${+new Date()}${format}`;

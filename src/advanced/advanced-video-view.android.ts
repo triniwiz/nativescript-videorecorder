@@ -5,13 +5,26 @@ import {
     cameraPositionProperty,
     Quality,
     qualityProperty,
-    saveToGalleryProperty
+    saveToGalleryProperty,
+    Orientation,
+    outputOrientation
 } from './advanced-video-view.common';
+
+export * from './advanced-video-view.common';
+
 import { fromObject } from 'tns-core-modules/data/observable';
 // declare const com;
 import * as app from 'tns-core-modules/application';
 import * as permissions from 'nativescript-permissions';
 let MediaMetadataRetriever = android.media.MediaMetadataRetriever;
+
+export enum NativeOrientation {
+    Unknown,
+    Portrait,
+    PortraitUpsideDown,
+    LandscapeLeft,
+    LandscapeRight,
+}
 
 export class AdvancedVideoView extends AdvancedVideoViewBase {
     thumbnails: any[];
@@ -112,6 +125,7 @@ export class AdvancedVideoView extends AdvancedVideoViewBase {
         this.nativeView.setListener(new listener());
         this.setQuality(this.quality);
         this.setCameraPosition(this.cameraPosition);
+        this.setCameraOrientation(this.outputOrientation);
         this.nativeView.setCameraOrientation(2);
     }
 
@@ -149,6 +163,43 @@ export class AdvancedVideoView extends AdvancedVideoViewBase {
             this.setCameraPosition(position);
         }
         return position;
+    }
+
+    private setCameraOrientation(orientation: Orientation): void {
+        let nativeOrientation: number;
+        switch (orientation) {
+            case Orientation.LandscapeLeft:
+                nativeOrientation = co.fitcom.fancycamera.FancyCamera.CameraOrientation.LANDSCAPE_LEFT.getValue();
+                break;
+            case Orientation.LandscapeRight:
+                nativeOrientation = co.fitcom.fancycamera.FancyCamera.CameraOrientation.LANDSCAPE_RIGHT.getValue();
+                break;
+            case Orientation.Portrait:
+                nativeOrientation = co.fitcom.fancycamera.FancyCamera.CameraOrientation.PORTRAIT.getValue();
+                break;
+            case Orientation.PortraitUpsideDown:
+                nativeOrientation = co.fitcom.fancycamera.FancyCamera.CameraOrientation.PORTRAIT_UPSIDE_DOWN.getValue();
+                break;
+            default:
+                nativeOrientation = co.fitcom.fancycamera.FancyCamera.CameraOrientation.UNKNOWN.getValue();
+                break;
+        }
+
+        if (this.nativeView && nativeOrientation !== NativeOrientation.Unknown) {
+            this.nativeView.setCameraOrientation(nativeOrientation);
+        }
+    }
+
+    [outputOrientation.getDefault](): Orientation {
+        this.setCameraOrientation(Orientation.Unknown);
+        return Orientation.Unknown;
+    }
+
+    [outputOrientation.setNative](orientation: Orientation) {
+        if (this.nativeView) {
+            this.setCameraOrientation(orientation);
+        }
+        return orientation;
     }
 
     [saveToGalleryProperty.getDefault]() {

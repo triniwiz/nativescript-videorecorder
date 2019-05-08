@@ -15,14 +15,32 @@ export enum Quality {
     QVGA = 'qvga'
 }
 
+export enum Orientation {
+    Unknown = 'unknown',
+    Portrait = 'portrait',
+    PortraitUpsideDown = 'portraitUpsideDown',
+    LandscapeLeft = 'landscapeLeft',
+    LandscapeRight = 'landscapeRight',
+}
+
 export type CameraPositionType = 'back' | 'front';
 
-export class AdvancedVideoViewBase extends View {
+export abstract class AdvancedVideoViewBase extends View {
     cameraPosition: CameraPositionType;
     saveToGallery: boolean;
     quality: Quality;
     thumbnailCount: number;
     fill: boolean;
+    outputOrientation: Orientation;
+
+    abstract readonly duration: number;
+    abstract readonly thumbnails: string[];
+
+    public abstract startRecording(): void;
+    public abstract stopRecording(): void;
+    public abstract stopPreview(): void;
+    public abstract toggleCamera(): void;
+    public abstract startPreview(): void;
 
     public static isAvailable(): boolean {
         return false;
@@ -32,22 +50,31 @@ export class AdvancedVideoViewBase extends View {
         return Promise.resolve();
     }
 }
+
+export const outputOrientation = new Property<AdvancedVideoViewBase, string>({
+    name: 'outputOrientation',
+    defaultValue: Orientation.Unknown
+});
+
 export const fillProperty = new Property<AdvancedVideoViewBase, boolean>({
     name: 'fill',
     defaultValue: false
 });
+
 export const thumbnailCountProperty = new Property<AdvancedVideoViewBase, number>({
     name: 'thumbnailCount',
     defaultValue: 1
 });
+
 export const qualityProperty = new Property<AdvancedVideoViewBase, any>({
     name: 'quality',
     defaultValue: Quality.MAX_480P
 });
+
 export const cameraPositionProperty = new Property<AdvancedVideoViewBase,
     CameraPositionType>({
         name: 'cameraPosition',
-        defaultValue: 'back'
+        defaultValue: CameraPosition.BACK
     });
 
 export const saveToGalleryProperty = new Property<AdvancedVideoViewBase,
@@ -61,3 +88,4 @@ cameraPositionProperty.register(AdvancedVideoViewBase);
 saveToGalleryProperty.register(AdvancedVideoViewBase);
 fillProperty.register(AdvancedVideoViewBase);
 thumbnailCountProperty.register(AdvancedVideoViewBase);
+outputOrientation.register(AdvancedVideoViewBase);

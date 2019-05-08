@@ -12,16 +12,32 @@ export declare enum Quality {
     LOWEST = "lowest",
     QVGA = "qvga",
 }
+export declare enum Orientation {
+    Unknown = "unknown",
+    Portrait = "portrait",
+    PortraitUpsideDown = "portraitUpsideDown",
+    LandscapeLeft = "landscapeLeft",
+    LandscapeRight = "landscapeRight",
+}
 export declare type CameraPositionType = 'back' | 'front';
-export declare class AdvancedVideoViewBase extends View {
+export declare abstract class AdvancedVideoViewBase extends View {
     cameraPosition: CameraPositionType;
     saveToGallery: boolean;
     quality: Quality;
     thumbnailCount: number;
     fill: boolean;
+    outputOrientation: Orientation;
+    readonly abstract duration: number;
+    readonly abstract thumbnails: string[];
+    abstract startRecording(): void;
+    abstract stopRecording(): void;
+    abstract stopPreview(): void;
+    abstract toggleCamera(): void;
+    abstract startPreview(): void;
     static isAvailable(): boolean;
     static requestPermissions(explanation?: string): Promise<any>;
 }
+export declare const outputOrientation: Property<AdvancedVideoViewBase, string>;
 export declare const fillProperty: Property<AdvancedVideoViewBase, boolean>;
 export declare const thumbnailCountProperty: Property<AdvancedVideoViewBase, number>;
 export declare const qualityProperty: Property<AdvancedVideoViewBase, any>;
