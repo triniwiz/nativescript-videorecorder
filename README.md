@@ -106,9 +106,12 @@ advancedView.startRecording();
 | startRecording()        |          | void    | Start recording camera preview.                       |
 | stopRecording()         |          | void    | Stop recording camera preview.                        |
 | toggleCamera()          |          | void    | Toggles between front or the back camera.             |
+| toggleTorch()           |          | void    | Toggles the torch (iOS only for now)                  |
 | duration                |          | int     | Get the current recording video duration.             |
 | cameraPosition          | BACK     | void    | Gets or Sets camera position                          |
 | outputOrientation       | PORTRAIT | void    | Gets or Sets output video orientation                 |
+| isTorchAvailable        |          | boolean | ReadOnly: is the torch supported for this camera      |
+| torch                   | false    | boolean | Enable/Disable torch (iOS only for now)               |
 | quality                 | MAX_480P | void    | Gets or sets Video Quality                            |
 
 #### outputOrientation
