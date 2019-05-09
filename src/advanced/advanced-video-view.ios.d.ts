@@ -13,6 +13,7 @@ export declare class AdvancedVideoView extends AdvancedVideoViewBase {
     _output: AVCaptureMovieFileOutput;
     _file: NSURL;
     _connection: AVCaptureConnection;
+    _device: AVCaptureDevice;
     private session;
     thumbnails: string[];
     _fileName: string;
@@ -24,6 +25,8 @@ export declare class AdvancedVideoView extends AdvancedVideoViewBase {
     onLoaded(): void;
     onUnloaded(): void;
     readonly duration: number;
+    readonly isTorchAvailable: boolean;
+    toggleTorch(): void;
     private _setOutputOrientation(orientation);
     private openCamera();
     startRecording(): void;

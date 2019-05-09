@@ -31,6 +31,7 @@ export abstract class AdvancedVideoViewBase extends View {
     quality: Quality;
     thumbnailCount: number;
     fill: boolean;
+    torch: boolean;
     outputOrientation: Orientation;
 
     abstract readonly duration: number;
@@ -40,7 +41,10 @@ export abstract class AdvancedVideoViewBase extends View {
     public abstract stopRecording(): void;
     public abstract stopPreview(): void;
     public abstract toggleCamera(): void;
+    public abstract toggleTorch(): void;
     public abstract startPreview(): void;
+
+    public abstract get isTorchAvailable(): boolean;
 
     public static isAvailable(): boolean {
         return false;
@@ -58,6 +62,11 @@ export const outputOrientation = new Property<AdvancedVideoViewBase, string>({
 
 export const fillProperty = new Property<AdvancedVideoViewBase, boolean>({
     name: 'fill',
+    defaultValue: false
+});
+
+export const torchProperty = new Property<AdvancedVideoViewBase, boolean>({
+    name: 'torch',
     defaultValue: false
 });
 
@@ -89,3 +98,4 @@ saveToGalleryProperty.register(AdvancedVideoViewBase);
 fillProperty.register(AdvancedVideoViewBase);
 thumbnailCountProperty.register(AdvancedVideoViewBase);
 outputOrientation.register(AdvancedVideoViewBase);
+torchProperty.register(AdvancedVideoViewBase);

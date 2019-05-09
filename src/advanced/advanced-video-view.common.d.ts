@@ -26,6 +26,7 @@ export declare abstract class AdvancedVideoViewBase extends View {
     quality: Quality;
     thumbnailCount: number;
     fill: boolean;
+    torch: boolean;
     outputOrientation: Orientation;
     readonly abstract duration: number;
     readonly abstract thumbnails: string[];
@@ -33,12 +34,15 @@ export declare abstract class AdvancedVideoViewBase extends View {
     abstract stopRecording(): void;
     abstract stopPreview(): void;
     abstract toggleCamera(): void;
+    abstract toggleTorch(): void;
     abstract startPreview(): void;
+    readonly abstract isTorchAvailable: boolean;
     static isAvailable(): boolean;
     static requestPermissions(explanation?: string): Promise<any>;
 }
 export declare const outputOrientation: Property<AdvancedVideoViewBase, string>;
 export declare const fillProperty: Property<AdvancedVideoViewBase, boolean>;
+export declare const torchProperty: Property<AdvancedVideoViewBase, boolean>;
 export declare const thumbnailCountProperty: Property<AdvancedVideoViewBase, number>;
 export declare const qualityProperty: Property<AdvancedVideoViewBase, any>;
 export declare const cameraPositionProperty: Property<AdvancedVideoViewBase, CameraPositionType>;

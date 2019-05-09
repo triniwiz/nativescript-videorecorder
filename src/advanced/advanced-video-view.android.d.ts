@@ -21,6 +21,8 @@ export declare class AdvancedVideoView extends AdvancedVideoViewBase {
     private setCameraPosition(position);
     private setCameraOrientation(orientation);
     private setQuality(quality);
+    readonly isTorchAvailable: boolean;
+    toggleTorch(): void;
     toggleCamera(): void;
     startRecording(): void;
     stopRecording(): void;

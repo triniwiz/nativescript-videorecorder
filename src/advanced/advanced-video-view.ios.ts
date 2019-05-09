@@ -8,6 +8,7 @@ import {
     saveToGalleryProperty,
     Orientation,
     outputOrientation,
+    torchProperty,
 } from './advanced-video-view.common';
 
 export * from './advanced-video-view.common';
@@ -80,6 +81,7 @@ export class AdvancedVideoView extends AdvancedVideoViewBase {
     _output: AVCaptureMovieFileOutput;
     _file: NSURL;
     _connection: AVCaptureConnection;
+    _device: AVCaptureDevice;
     private session: AVCaptureSession;
     public thumbnails: string[];
     _fileName: string;
@@ -150,6 +152,33 @@ export class AdvancedVideoView extends AdvancedVideoViewBase {
         return save;
     }
 
+    [torchProperty.getDefault]() {
+        return this._device && this._device.torchMode === AVCaptureTorchMode.On;
+    }
+
+    [torchProperty.setNative](torch) {
+        if (!this.isTorchAvailable) return false;
+        if (this._device.lockForConfiguration()) {
+            if (torch) {
+                this._device.setTorchModeOnWithLevelError(AVCaptureMaxAvailableTorchLevel);
+            } else {
+                this._device.torchMode = AVCaptureTorchMode.Off;
+            }
+
+            this._device.unlockForConfiguration();
+        }
+        return torch;
+    }
+
+    public get isTorchAvailable(): boolean {
+        return this._device && this._device.hasTorch;
+    }
+
+    public toggleTorch() {
+        if (!this.isTorchAvailable) return;
+        this.torch = !this.torch;
+    }
+
     private _setOutputOrientation(orientation: Orientation) {
         let nativeOrientation: number;
         switch (orientation) {
@@ -184,20 +213,19 @@ export class AdvancedVideoView extends AdvancedVideoViewBase {
 
             this.session = new AVCaptureSession();
             let devices = AVCaptureDevice.devicesWithMediaType(AVMediaTypeVideo);
-            let device: AVCaptureDevice;
             let pos =
                 this.cameraPosition === 'front'
                     ? AVCaptureDevicePosition.Front
                     : AVCaptureDevicePosition.Back;
             for (let i = 0; i < devices.count; i++) {
                 if (devices[i].position === pos) {
-                    device = devices[i];
+                    this._device = devices[i];
                     break;
                 }
             }
 
             let input: AVCaptureDeviceInput = AVCaptureDeviceInput
-                .deviceInputWithDeviceError(device);
+                .deviceInputWithDeviceError(this._device);
             let audioDevice: AVCaptureDevice = AVCaptureDevice.defaultDeviceWithMediaType(
                 AVMediaTypeAudio
             );

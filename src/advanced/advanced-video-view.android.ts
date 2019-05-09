@@ -7,7 +7,8 @@ import {
     qualityProperty,
     saveToGalleryProperty,
     Orientation,
-    outputOrientation
+    outputOrientation,
+    torchProperty
 } from './advanced-video-view.common';
 
 export * from './advanced-video-view.common';
@@ -261,6 +262,31 @@ export class AdvancedVideoView extends AdvancedVideoViewBase {
         if (!quality) return quality;
         this.setQuality(this.quality);
         return quality;
+    }
+
+
+    [torchProperty.getDefault]() {
+        return false;
+    }
+
+    [torchProperty.setNative](torch) {
+        if (!this.isTorchAvailable || !this.nativeView) return false;
+        if (torch && !this.nativeView.flashEnabled) {
+            this.nativeView.enableFlash();
+        } else if (!torch && this.nativeView.flashEnabled) {
+            this.nativeView.disableFlash();
+        }
+        return torch;
+    }
+
+    public get isTorchAvailable() {
+        return false; // this.nativeView && this.nativeView.hasFlash();
+    }
+
+    public toggleTorch() {
+        if (!this.isTorchAvailable) return;
+        console.log('toggleFlash is called', this.torch);
+        this.torch = !this.torch;
     }
 
     public toggleCamera() {
