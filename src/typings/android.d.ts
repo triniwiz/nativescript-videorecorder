@@ -121,6 +121,7 @@ declare namespace co {
         public startRecording(): void;
         public requestPermission(): void;
         public setCameraPosition(param0: number): void;
+        public setCameraOrientation(param0: number): void;
         public onSurfaceTextureAvailable(param0: androidgraphicsSurfaceTexture, param1: number, param2: number): void;
         public onSurfaceTextureSizeChanged(param0: androidgraphicsSurfaceTexture, param1: number, param2: number): void;
         public hasPermission(): boolean;
@@ -130,6 +131,7 @@ declare namespace co {
         public setFile(param0: javaioFile): void;
         public toggleCamera(): void;
         public getCameraPosition(): number;
+        public getCameraOrientation(): number;
         public constructor(param0: androidcontentContext);
         public onSurfaceTextureUpdated(param0: androidgraphicsSurfaceTexture): void;
         public constructor(param0: androidcontentContext, param1: androidutilAttributeSet);
@@ -143,6 +145,16 @@ declare namespace co {
           public getValue(): number;
           public static values(): native.Array<co.fitcom.fancycamera.FancyCamera.CameraPosition>;
           public static valueOf(param0: string): co.fitcom.fancycamera.FancyCamera.CameraPosition;
+        }
+        export class CameraOrientation {
+          public static UNKNOWN: co.fitcom.fancycamera.FancyCamera.CameraOrientation;
+          public static PORTRAIT: co.fitcom.fancycamera.FancyCamera.CameraOrientation;
+          public static PORTRAIT_UPSIDE_DOWN: co.fitcom.fancycamera.FancyCamera.CameraOrientation;
+          public static LANDSCAPE_LEFT: co.fitcom.fancycamera.FancyCamera.CameraOrientation;
+          public static LANDSCAPE_RIGHT: co.fitcom.fancycamera.FancyCamera.CameraOrientation;
+          public getValue(): number;
+          public static values(): native.Array<co.fitcom.fancycamera.FancyCamera.CameraOrientation>;
+          public static valueOf(param0: string): co.fitcom.fancycamera.FancyCamera.CameraOrientation;
         }
         export class Quality {
           public static MAX_480P: co.fitcom.fancycamera.FancyCamera.Quality;
