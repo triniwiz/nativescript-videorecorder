@@ -9,7 +9,8 @@ declare var androidx: any;
 
 if (android.support && android.support.v4) {
   androidSupport = android.support.v4;
-} else if (androidx && androidx.core) {
+}
+if (androidx && androidx.core) {
   androidSupport = androidx.core;
 }
 
