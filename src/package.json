@@ -1,6 +1,6 @@
 {
-  "name": "nativescript-videorecorder",
-  "version": "3.0.0-beta.2",
+  "name": "@agregar/nativescript-videorecorder",
+  "version": "3.1.0-beta.0",
   "description": "NativeScript videorecording plugin",
   "main": "videorecorder",
   "typings": "index.d.ts",
@@ -19,8 +19,8 @@
     "tslint": "cd .. && tslint \"**/*.ts\" --config tslint.json --exclude \"**/node_modules/**\"",
     "plugin.link": "npm link && cd ../demo && npm link nativescript-videorecorder && cd ../src",
     "plugin.tscwatch": "npm run tsc -- -w",
-    "demo.ios": "npm i && npm run tsc && cd ../demo && tns run ios --syncAllFiles",
-    "demo.android": "npm i && npm run tsc && cd ../demo && tns run android --syncAllFiles",
+    "demo.ios": "npm i && npm run tsc && cd ../demo && tns run ios",
+    "demo.android": "npm i && npm run tsc && cd ../demo && tns run android",
     "demo.reset": "cd ../demo && rimraf platforms",
     "plugin.prepare": "npm run tsc && cd ../demo && tns plugin remove nativescript-videorecorder && tns plugin add ../src",
     "clean": "cd ../demo && rimraf hooks node_modules platforms && cd ../src && rimraf node_modules && npm run plugin.link",
@@ -51,15 +51,20 @@
   "homepage": "https://github.com/triniwiz/nativescript-videorecorder",
   "readmeFilename": "README.md",
   "devDependencies": {
-    "tns-core-modules": "^5.0.0",
-    "tns-platform-declarations": "^5.0.0",
-    "typescript": "~2.6.0",
+    "tns-core-modules": "^6.1.0",
+    "tns-platform-declarations": "^6.1.0",
+    "typescript": "~3.5.3",
     "prompt": "^1.0.0",
     "rimraf": "^2.5.0",
-    "tslint": "^5.0.0"
+    "tslint": "^5.11.0"
   },
   "dependencies": {
     "nativescript-permissions": "^1.0.0"
   },
-  "bootstrapper": "nativescript-plugin-seed"
+  "repository": {
+    "type": "git",
+    "url": "git://github.com/Agregar/nativescript-videorecorder.git"
+  },
+  "bootstrapper": "nativescript-plugin-seed",
+  "publishConfig": { "registry": "https://npm.pkg.github.com" }
 }
