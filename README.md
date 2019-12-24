@@ -85,6 +85,8 @@ Promises above can be rejected with:
 
 ## AdvancedVideoView
 
+AdvancedVideoView does not open the device camera application, but rather allows you to embed the camera view in your app. You can then add buttons over it to start/stop recording. It allows for a deeper level of UI customization.
+
 ```xml
 <Page xmlns="http://schemas.nativescript.org/tns.xsd" xmlns:recorder="nativescript-videorecorder/advanced">
 <recorder:AdvancedVideoView quality="highest" cameraPosition="front" id="camera"/>
@@ -104,6 +106,19 @@ advancedView.startRecording();
 | startRecording()        |          | void    | Start recording camera preview.                       |
 | stopRecording()         |          | void    | Stop recording camera preview.                        |
 | toggleCamera()          |          | void    | Toggles between front or the back camera.             |
+| toggleTorch()           |          | void    | Toggles the torch (iOS only for now)                  |
 | duration                |          | int     | Get the current recording video duration.             |
 | cameraPosition          | BACK     | void    | Gets or Sets camera position                          |
+| outputOrientation       | PORTRAIT | void    | Gets or Sets output video orientation                 |
+| isTorchAvailable        |          | boolean | ReadOnly: is the torch supported for this camera      |
+| torch                   | false    | boolean | Enable/Disable torch (iOS only for now)               |
 | quality                 | MAX_480P | void    | Gets or sets Video Quality                            |
+
+#### outputOrientation
+
+Be careful to not change orientation while recording, it's not supported.
+
+Possible values : `portrait`, `portraitUpsideDown`, `landscapeLeft`, `landscapeRight`, you can also use the `Orientation` enum.
+
+This property let you manage the orientation of the output file correctly, it means you can trust your gravity sensors to detect orientation and set it on the camera.
+With this, you can properly change orientation even when device orientation is locked.

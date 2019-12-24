@@ -5,13 +5,28 @@ import {
     cameraPositionProperty,
     Quality,
     qualityProperty,
-    saveToGalleryProperty
+    saveToGalleryProperty,
+    Orientation,
+    outputOrientation,
+    torchProperty
 } from './advanced-video-view.common';
+
+export * from './advanced-video-view.common';
+
 import { fromObject } from 'tns-core-modules/data/observable';
 // declare const com;
 import * as app from 'tns-core-modules/application';
 import * as permissions from 'nativescript-permissions';
 let MediaMetadataRetriever = android.media.MediaMetadataRetriever;
+
+export enum NativeOrientation {
+    Unknown,
+    Portrait,
+    PortraitUpsideDown,
+    LandscapeLeft,
+    LandscapeRight,
+}
+
 export class AdvancedVideoView extends AdvancedVideoViewBase {
     thumbnails: any[];
     get duration() {
@@ -33,7 +48,7 @@ export class AdvancedVideoView extends AdvancedVideoViewBase {
     private durationInterval: any;
 
     public static isAvailable() {
-        return app.android.currentContext.getPackageManager().hasSystemFeature(android.content.pm.PackageManager.FEATURE_CAMERA);
+        return app.android.context.getPackageManager().hasSystemFeature(android.content.pm.PackageManager.FEATURE_CAMERA);
     }
 
     public createNativeView() {
@@ -53,6 +68,8 @@ export class AdvancedVideoView extends AdvancedVideoViewBase {
         let that = this;
         const listener = (co as any).fitcom.fancycamera.CameraEventListenerUI.extend(
             {
+                onCameraOpenUI() {},
+                onCameraCloseUI() {},
                 onVideoEventUI(event: co.fitcom.fancycamera.VideoEvent) {
                     const owner = ref.get();
                     if (
@@ -109,6 +126,8 @@ export class AdvancedVideoView extends AdvancedVideoViewBase {
         this.nativeView.setListener(new listener());
         this.setQuality(this.quality);
         this.setCameraPosition(this.cameraPosition);
+        this.setCameraOrientation(this.outputOrientation);
+        this.nativeView.setCameraOrientation(2);
     }
 
     public onLoaded(): void {
@@ -145,6 +164,43 @@ export class AdvancedVideoView extends AdvancedVideoViewBase {
             this.setCameraPosition(position);
         }
         return position;
+    }
+
+    private setCameraOrientation(orientation: Orientation): void {
+        let nativeOrientation: number;
+        switch (orientation) {
+            case Orientation.LandscapeLeft:
+                nativeOrientation = co.fitcom.fancycamera.FancyCamera.CameraOrientation.LANDSCAPE_LEFT.getValue();
+                break;
+            case Orientation.LandscapeRight:
+                nativeOrientation = co.fitcom.fancycamera.FancyCamera.CameraOrientation.LANDSCAPE_RIGHT.getValue();
+                break;
+            case Orientation.Portrait:
+                nativeOrientation = co.fitcom.fancycamera.FancyCamera.CameraOrientation.PORTRAIT.getValue();
+                break;
+            case Orientation.PortraitUpsideDown:
+                nativeOrientation = co.fitcom.fancycamera.FancyCamera.CameraOrientation.PORTRAIT_UPSIDE_DOWN.getValue();
+                break;
+            default:
+                nativeOrientation = co.fitcom.fancycamera.FancyCamera.CameraOrientation.UNKNOWN.getValue();
+                break;
+        }
+
+        if (this.nativeView && nativeOrientation !== NativeOrientation.Unknown) {
+            this.nativeView.setCameraOrientation(nativeOrientation);
+        }
+    }
+
+    [outputOrientation.getDefault](): Orientation {
+        this.setCameraOrientation(Orientation.Unknown);
+        return Orientation.Unknown;
+    }
+
+    [outputOrientation.setNative](orientation: Orientation) {
+        if (this.nativeView) {
+            this.setCameraOrientation(orientation);
+        }
+        return orientation;
     }
 
     [saveToGalleryProperty.getDefault]() {
@@ -208,11 +264,36 @@ export class AdvancedVideoView extends AdvancedVideoViewBase {
         return quality;
     }
 
+
+    [torchProperty.getDefault]() {
+        return false;
+    }
+
+    [torchProperty.setNative](torch) {
+        if (!this.isTorchAvailable || !this.nativeView) return false;
+        if (torch && !this.nativeView.flashEnabled) {
+            this.nativeView.enableFlash();
+        } else if (!torch && this.nativeView.flashEnabled) {
+            this.nativeView.disableFlash();
+        }
+        return torch;
+    }
+
+    public get isTorchAvailable() {
+        return false; // this.nativeView && this.nativeView.hasFlash();
+    }
+
+    public toggleTorch() {
+        if (!this.isTorchAvailable) return;
+        console.log('toggleFlash is called', this.torch);
+        this.torch = !this.torch;
+    }
+
     public toggleCamera() {
         this.nativeView.toggleCamera();
     }
 
-    public startRecording(cb): void {
+    public startRecording(): void {
         this.nativeView.startRecording();
     }
 
