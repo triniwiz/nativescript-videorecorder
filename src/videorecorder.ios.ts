@@ -1,6 +1,5 @@
-import * as frame from 'tns-core-modules/ui/frame';
-import * as fs from 'tns-core-modules/file-system';
-import * as types from 'tns-core-modules/utils/types';
+import * as fs from '@nativescript/core/file-system';
+import * as types from '@nativescript/core/utils/types';
 import './async-await';
 
 import {
@@ -11,28 +10,89 @@ import {
     VideoFormatType,
     VideoRecorderCommon,
 } from './videorecorder.common';
+import { Frame } from '@nativescript/core/ui/frame';
 
 export * from './videorecorder.common';
 
 let listener;
 
 export class VideoRecorder extends VideoRecorderCommon {
-    public requestPermissions(options?: Options): Promise<any> {
-        return new Promise((resolve, reject) => {
-            // Permission is only necessary when file needs to be saved in gallery
-            if (!options.saveToGallery) return resolve();
+    public requestPermissions(explanation?: string): Promise<any> {
+        return new Promise(async (resolve, reject) => {
+            const cameraPermissionStatus = AVCaptureDevice.authorizationStatusForMediaType(AVMediaTypeVideo);
+            const audioPermissionStatus = AVCaptureDevice.authorizationStatusForMediaType(AVMediaTypeAudio);
+            let authStatus = cameraPermissionStatus === AVAuthorizationStatus.Authorized && audioPermissionStatus === AVAuthorizationStatus.Authorized;
+            if (cameraPermissionStatus === AVAuthorizationStatus.NotDetermined) {
+                try {
+                    await this.requestCameraPermission();
+                    authStatus = true;
+                } catch (e) {
+                    authStatus = false;
+                }
+            }
 
-            let authStatus = PHPhotoLibrary.authorizationStatus();
-            if (authStatus === PHAuthorizationStatus.NotDetermined) {
-                PHPhotoLibrary.requestAuthorization(auth => {
-                    if (auth === PHAuthorizationStatus.Authorized) {
-                        resolve();
-                    }
-                });
-            } else if (authStatus !== PHAuthorizationStatus.Authorized) {
+            if (audioPermissionStatus === AVAuthorizationStatus.NotDetermined) {
+                try {
+                    await this.requestAudioPermission();
+                    authStatus = true;
+                } catch (e) {
+                    authStatus = false;
+                }
+            }
+            if (authStatus) {
+                resolve();
+            } else {
                 reject();
             }
         });
+    }
+
+    private requestCameraPermission() {
+        return new Promise((resolve, reject) => {
+            AVCaptureDevice.requestAccessForMediaTypeCompletionHandler(AVMediaTypeVideo, cameraPermissionStatus => {
+                if (cameraPermissionStatus) {
+                    resolve()
+                } else {
+                    reject();
+                }
+            });
+        });
+    }
+
+    private requestAudioPermission() {
+        return new Promise((resolve, reject) => {
+            AVCaptureDevice.requestAccessForMediaTypeCompletionHandler(AVMediaTypeAudio, audioPermissionStatus => {
+                if (audioPermissionStatus) {
+                    resolve()
+                } else {
+                    reject();
+                }
+            });
+        });
+    }
+
+    public hasCameraPermission(): boolean {
+        return AVCaptureDevice.authorizationStatusForMediaType(AVMediaTypeVideo) === AVAuthorizationStatus.Authorized
+    }
+
+    public hasAudioPermission(): boolean {
+        return AVCaptureDevice.authorizationStatusForMediaType(AVMediaTypeAudio) === AVAuthorizationStatus.Authorized
+    }
+
+    public hasStoragePermission(): boolean {
+        return PHPhotoLibrary.authorizationStatus() === PHAuthorizationStatus.Authorized;
+    }
+
+    public requestStoragePermission(explanation?: string): Promise<any> {
+        return new Promise<any>((resolve, reject) => {
+            PHPhotoLibrary.requestAuthorization(auth => {
+                if (auth === PHAuthorizationStatus.Authorized) {
+                    resolve();
+                } else {
+                    reject();
+                }
+            });
+        })
     }
 
     public static isAvailable() {
@@ -58,10 +118,9 @@ export class VideoRecorder extends VideoRecorderCommon {
                 ? UIImagePickerControllerQualityType.TypeHigh
                 : UIImagePickerControllerQualityType.TypeLow;
 
-            picker.videoMaximumDuration =
-                types.isNumber(options.duration) && options.duration > 0
-                    ? Number(options.duration)
-                    : Number.POSITIVE_INFINITY;
+            if (types.isNumber(options.duration) && options.duration > 0) {
+                picker.videoMaximumDuration = Number(options.duration);
+            }
 
             if (options) {
                 listener = UIImagePickerControllerDelegateImpl.initWithOwnerCallbackOptions(
@@ -78,19 +137,69 @@ export class VideoRecorder extends VideoRecorderCommon {
             picker.delegate = listener;
             picker.modalPresentationStyle = UIModalPresentationStyle.CurrentContext;
 
-            let topMostFrame = frame.topmost();
+            let viewController;
+            let topMostFrame = Frame.topmost();
             if (topMostFrame) {
-                let viewController =
-                    topMostFrame.currentPage && topMostFrame.currentPage.ios;
-                if (viewController) {
-                    viewController.presentViewControllerAnimatedCompletion(
-                        picker,
-                        true,
-                        null
-                    );
-                }
+                const topPage =
+                    (topMostFrame.currentPage || topMostFrame.page);
+                viewController = topPage.ios;
+            } else {
+                viewController = this.topViewController;
+            }
+            if (viewController) {
+                viewController.presentViewControllerAnimatedCompletion(
+                    picker,
+                    true,
+                    null
+                );
+            } else {
+                reject('Failed');
             }
         });
+    }
+
+
+    private static get rootViewController(): UIViewController | undefined {
+        const keyWindow = UIApplication.sharedApplication.keyWindow;
+        return keyWindow != null ? keyWindow.rootViewController : undefined;
+    }
+
+    private get topViewController(): UIViewController | undefined {
+        const root = VideoRecorder.rootViewController;
+        if (root == null) {
+            return undefined;
+        }
+        return this.findTopViewController(root);
+    }
+
+    private findTopViewController(
+        root: UIViewController
+    ): UIViewController | undefined {
+        const presented = root.presentedViewController;
+        if (presented != null) {
+            return this.findTopViewController(presented);
+        }
+        if (root instanceof UISplitViewController) {
+            const last = root.viewControllers.lastObject;
+            if (last == null) {
+                return root;
+            }
+            return this.findTopViewController(last);
+        } else if (root instanceof UINavigationController) {
+            const top = root.topViewController;
+            if (top == null) {
+                return root;
+            }
+            return this.findTopViewController(top);
+        } else if (root instanceof UITabBarController) {
+            const selected = root.selectedViewController;
+            if (selected == null) {
+                return root;
+            }
+            return this.findTopViewController(selected);
+        } else {
+            return root;
+        }
     }
 }
 
@@ -212,3 +321,5 @@ class UIImagePickerControllerDelegateImpl extends NSObject
         }
     }
 }
+
+

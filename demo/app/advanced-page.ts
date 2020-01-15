@@ -1,7 +1,7 @@
-import * as pages from 'tns-core-modules/ui/page';
+import * as pages from '@nativescript/core/ui/page';
 import { HelloWorldModel } from './main-view-model';
-import { topmost } from 'tns-core-modules/ui/frame';
-import { AdvancedVideoView } from 'nativescript-videorecorder/advanced';
+import { Frame } from '@nativescript/core/ui/frame';
+
 let page;
 let vm = new HelloWorldModel();
 let recorder;
@@ -14,7 +14,6 @@ export function navigatingTo(args) {
 export function loaded(args: pages.NavigatedData) {
     page = <pages.Page>args.object;
     page.bindingContext = vm;
-    AdvancedVideoView.requestPermissions();
     recorder = page.getViewById('recorderView');
     vm.set('duration', recorder && recorder.duration ? recorder.duration : 0);
     recorder.on('started', args => {
@@ -25,7 +24,7 @@ export function loaded(args: pages.NavigatedData) {
     recorder.on('finished', args => {
         clearInterval(interval);
         page.bindingContext.set('selectedVideo', args.object.get('file'));
-        console.log("thumbnails: ", recorder.thumbnails);
+        console.log('thumbnails: ', recorder.thumbnails);
     });
 }
 
@@ -44,5 +43,5 @@ export function toggleCamera() {
 }
 
 export function goToVideoRecorder(event) {
-    topmost().goBack();
+    Frame.topmost().goBack();
 }

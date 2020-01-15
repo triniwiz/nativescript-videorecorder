@@ -8,9 +8,20 @@ export declare class AdvancedVideoView extends AdvancedVideoViewBase {
     readonly isTorchAvailable: boolean;
 
     public startRecording(): void;
+
     public stopRecording(): void;
+
     public stopPreview(): void;
+
     public toggleCamera(): void;
+
     public toggleTorch(): void;
+
     public startPreview(): void;
 }
+
+export declare interface TNSCameraProvider {
+    getCameraXConfig: () => any;
+}
+
+export declare const TNSCamera: { defaultConfig: () => any };

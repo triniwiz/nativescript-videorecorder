@@ -48,14 +48,14 @@ export abstract class VideoRecorderCommon {
     public record(options: Options = {}): Promise<RecordResult> {
         options = Object.assign(this.options, options);
 
-        return this.requestPermissions(options).catch((err) => {
+        return this.requestPermissions(options.explanation).catch((err) => {
             throw {event: 'denied'};
         }).then(() => {
             return this._startRecording(options);
         });
     }
 
-    public requestPermissions(options: Options = {}): Promise<any> {
+    public requestPermissions(explanation?: string): Promise<any> {
         return Promise.resolve();
     }
 

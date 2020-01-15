@@ -1,7 +1,7 @@
-import * as pages from 'tns-core-modules/ui/page';
+import * as pages from '@nativescript/core/ui/page';
 import { HelloWorldModel } from './main-view-model';
 import { CameraPosition, VideoRecorder } from 'nativescript-videorecorder';
-import { topmost } from 'tns-core-modules/ui/frame';
+import { Frame } from '@nativescript/core/ui/frame';
 
 let page;
 let vm = new HelloWorldModel();
@@ -19,7 +19,7 @@ const vr = new VideoRecorder({hd: true, position: CameraPosition.NONE});
 vm.set('position', CameraPosition.NONE);
 
 export function openAdvancedCameraView(event) {
-    topmost().navigate('advanced-page');
+    Frame.topmost().navigate({moduleName: 'advanced-page'});
 }
 
 export function recordVideo() {

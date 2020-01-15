@@ -1,5 +1,5 @@
-import * as fs from 'tns-core-modules/file-system';
-import { layout } from 'tns-core-modules/ui/core/view';
+import * as fs from '@nativescript/core/file-system';
+import { layout } from '@nativescript/core/ui/core/view';
 import '../async-await';
 import {
     AdvancedVideoViewBase,
@@ -13,7 +13,7 @@ import {
 
 export * from './advanced-video-view.common';
 
-import { fromObject } from 'tns-core-modules/data/observable';
+import { fromObject } from '@nativescript/core/data/observable';
 
 export enum NativeOrientation {
     Unknown,
@@ -329,19 +329,20 @@ export class AdvancedVideoView extends AdvancedVideoViewBase {
             this.notify({
                 eventName: 'error',
                 object: fromObject({
-                    message: ex.getMessage()
+                    message: ex.message
                 })
             });
         }
     }
 
+    _delegate: any;
     public startRecording(): void {
-        let delegate = AVCaptureFileOutputRecordingDelegateImpl.initWithOwner(
+        this._delegate = AVCaptureFileOutputRecordingDelegateImpl.initWithOwner(
             new WeakRef(this)
         );
         this._output.startRecordingToOutputFileURLRecordingDelegate(
             this._file,
-            delegate
+            this._delegate
         );
     }
 
@@ -359,7 +360,7 @@ export class AdvancedVideoView extends AdvancedVideoViewBase {
     }
 
     public toggleCamera(): void {
-        if (this.cameraPosition === CameraPosition.BACK.toString()) {
+        if (this.cameraPosition === CameraPosition.BACK) {
             this.cameraPosition = 'front';
         } else {
             this.cameraPosition = 'back';

@@ -4,7 +4,7 @@
     xmlns:recorder="nativescript-videorecorder/advanced" loaded="loaded">
     <ActionBar title="Advanced VideoRecorder"/>
     <StackLayout margin="20 0">
-        <recorder:AdvancedVideoView height="40%" quality="1080p" cameraPosition="front" id="recorderView" fill="true" thumbnailCount="1"/>
+        <recorder:AdvancedVideoView height="40%" id="recorderView" fill="true" thumbnailCount="1"/>
         <Button text="Video Recorder" tap="goToVideoRecorder"/>
         <StackLayout verticalAlignment="center">
             <Button text="Toggle Camera" tap="toggleCamera"/>

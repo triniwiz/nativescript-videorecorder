@@ -3,20 +3,22 @@ import {
     AdvancedVideoViewBase,
     CameraPosition,
     cameraPositionProperty,
+    Orientation,
+    outputOrientation,
     Quality,
     qualityProperty,
     saveToGalleryProperty,
-    Orientation,
-    outputOrientation,
     torchProperty
 } from './advanced-video-view.common';
+import { releaseNativeObject } from '@nativescript/core/utils/utils';
+import { fromObject } from '@nativescript/core/data/observable';
+// declare const com;
+import * as app from '@nativescript/core/application';
+import * as permissions from 'nativescript-permissions';
 
+declare var co: any, androidx: any;
 export * from './advanced-video-view.common';
 
-import { fromObject } from 'tns-core-modules/data/observable';
-// declare const com;
-import * as app from 'tns-core-modules/application';
-import * as permissions from 'nativescript-permissions';
 let MediaMetadataRetriever = android.media.MediaMetadataRetriever;
 
 export enum NativeOrientation {
@@ -29,6 +31,7 @@ export enum NativeOrientation {
 
 export class AdvancedVideoView extends AdvancedVideoViewBase {
     thumbnails: any[];
+
     get duration() {
         return this.nativeView && this.nativeView.getDuration()
             ? this.nativeView.getDuration()
@@ -51,105 +54,82 @@ export class AdvancedVideoView extends AdvancedVideoViewBase {
         return app.android.context.getPackageManager().hasSystemFeature(android.content.pm.PackageManager.FEATURE_CAMERA);
     }
 
-    public createNativeView() {
-        app.android.on(app.AndroidApplication.activityRequestPermissionsEvent, (args: app.AndroidActivityRequestPermissionsEventData) => {
-            if (permissions.hasPermission((android as any).Manifest.permission.CAMERA) && permissions.hasPermission((android as any).Manifest.permission.RECORD_AUDIO)) {
-                this.startPreview();
-                app.android.off(app.AndroidApplication.activityRequestPermissionsEvent);
-            }
+    private _view;
 
-        });
+    public createNativeView() {
         return new co.fitcom.fancycamera.FancyCamera(this._context);
+    }
+
+    private _handlePermission(args) {
+        if (this.nativeView) {
+            this.nativeView.onPermissionHandler(args.requestCode, args.permissions, args.grantResults);
+        }
     }
 
     public initNativeView() {
         super.initNativeView();
-        const ref = new WeakRef(this);
+        app.android.on(app.AndroidApplication.activityRequestPermissionsEvent, this._handlePermission);
+        const ref = new WeakRef<AdvancedVideoView>(this);
         let that = this;
         const listener = (co as any).fitcom.fancycamera.CameraEventListenerUI.extend(
             {
-                onCameraOpenUI() {},
-                onCameraCloseUI() {},
-                onVideoEventUI(event: co.fitcom.fancycamera.VideoEvent) {
+                onCameraOpenUI() {
+                },
+                onCameraCloseUI() {
+                },
+                onEventUI(event) {
                     const owner = ref.get();
-                    if (
-                        event.getType() === co.fitcom.fancycamera.EventType.INFO &&
-                        event
-                            .getMessage()
-                            .indexOf(
-                                co.fitcom.fancycamera.VideoEvent.EventInfo.RECORDING_FINISHED.toString()
-                            ) > -1
-                    ) {
-                        if (that.thumbnailCount && that.thumbnailCount > 0) {
-                            that.extractThumbnails(event.getFile().getPath());
-                        }
-                        owner.notify({
-                            eventName: 'finished',
-                            object: fromObject({
-                                file: event.getFile().getPath()
-                            })
-                        });
-                    } else if (
-                        event.getType() === co.fitcom.fancycamera.EventType.INFO &&
-                        event
-                            .getMessage()
-                            .indexOf(
-                                co.fitcom.fancycamera.VideoEvent.EventInfo.RECORDING_STARTED.toString()
-                            ) > -1
-                    ) {
-                        owner.notify({
-                            eventName: 'started',
-                            object: fromObject({})
-                        });
-                    } else {
-                        if (event.getType() === co.fitcom.fancycamera.EventType.ERROR) {
+                    if (owner) {
+                        const EventType = co.fitcom.fancycamera.EventType as any;
+                        if (event.getType() === EventType.from(1) && event.getMessage() === null && event.getFile() !== null) {
+                            if (owner.thumbnailCount && owner.thumbnailCount > 0) {
+                                that.extractThumbnails(event.getFile().getPath());
+                            }
                             owner.notify({
-                                eventName: 'error',
+                                eventName: 'finished',
                                 object: fromObject({
-                                    message: event.getMessage()
+                                    file: event.getFile().getPath()
                                 })
+                            });
+                        } else if (event.getType() === EventType.from(1) && event.getMessage() === null && event.getFile() === null) {
+                            owner.notify({
+                                eventName: 'started',
+                                object: fromObject({})
                             });
                         } else {
-                            owner.notify({
-                                eventName: 'info',
-                                object: fromObject({
-                                    message: event.getMessage()
-                                })
-                            });
+                            if (event.getMessage()) {
+                                owner.notify({
+                                    eventName: 'error',
+                                    object: fromObject({
+                                        message: event.getMessage()
+                                    })
+                                });
+                            }
                         }
                     }
-                },
-                onPhotoEventUI(event: co.fitcom.fancycamera.PhotoEvent) {
                 }
             }
         );
         this.nativeView.setListener(new listener());
-        this.setQuality(this.quality);
-        this.setCameraPosition(this.cameraPosition);
-        this.setCameraOrientation(this.outputOrientation);
-        this.nativeView.setCameraOrientation(2);
+        //this.setQuality(this.quality);
+        //this.setCameraPosition(this.cameraPosition);
+        //this.setCameraOrientation(this.outputOrientation);
+        //  unknown
+        // this.nativeView.setCameraOrientation(co.fitcom.fancycamera.FancyCamera.CameraOrientation.Companion.from(0));
     }
 
-    public onLoaded(): void {
-        super.onLoaded();
-        this.startPreview();
-    }
-
-    public onUnloaded(): void {
-        if (this.nativeView && this.nativeView.release) {
-            this.nativeView.release();
-        }
-        app.android.off(app.AndroidApplication.activityRequestPermissionsEvent);
-        super.onUnloaded();
+    disposeNativeView(): void {
+        app.android.off(app.AndroidApplication.activityRequestPermissionsEvent, this._handlePermission);
+        super.disposeNativeView();
     }
 
     private setCameraPosition(position): void {
         switch (position) {
             case CameraPosition.FRONT:
-                this.nativeView.setCameraPosition(1);
+                this.nativeView.setCameraPosition(co.fitcom.fancycamera.FancyCamera.CameraPosition.Companion.from(1));
                 break;
             default:
-                this.nativeView.setCameraPosition(0);
+                this.nativeView.setCameraPosition(co.fitcom.fancycamera.FancyCamera.CameraPosition.Companion.from(0));
                 break;
         }
     }
@@ -170,23 +150,23 @@ export class AdvancedVideoView extends AdvancedVideoViewBase {
         let nativeOrientation: number;
         switch (orientation) {
             case Orientation.LandscapeLeft:
-                nativeOrientation = co.fitcom.fancycamera.FancyCamera.CameraOrientation.LANDSCAPE_LEFT.getValue();
+                nativeOrientation = co.fitcom.fancycamera.FancyCamera.CameraOrientation.Companion.from(3);
                 break;
             case Orientation.LandscapeRight:
-                nativeOrientation = co.fitcom.fancycamera.FancyCamera.CameraOrientation.LANDSCAPE_RIGHT.getValue();
+                nativeOrientation = co.fitcom.fancycamera.FancyCamera.CameraOrientation.Companion.from(4);
                 break;
             case Orientation.Portrait:
-                nativeOrientation = co.fitcom.fancycamera.FancyCamera.CameraOrientation.PORTRAIT.getValue();
+                nativeOrientation = co.fitcom.fancycamera.FancyCamera.CameraOrientation.Companion.from(1);
                 break;
             case Orientation.PortraitUpsideDown:
-                nativeOrientation = co.fitcom.fancycamera.FancyCamera.CameraOrientation.PORTRAIT_UPSIDE_DOWN.getValue();
+                nativeOrientation = co.fitcom.fancycamera.FancyCamera.CameraOrientation.Companion.from(2);
                 break;
             default:
-                nativeOrientation = co.fitcom.fancycamera.FancyCamera.CameraOrientation.UNKNOWN.getValue();
+                nativeOrientation = co.fitcom.fancycamera.FancyCamera.CameraOrientation.Companion.from(0);
                 break;
         }
 
-        if (this.nativeView && nativeOrientation !== NativeOrientation.Unknown) {
+        if (this.nativeView && nativeOrientation) {
             this.nativeView.setCameraOrientation(nativeOrientation);
         }
     }
@@ -219,39 +199,39 @@ export class AdvancedVideoView extends AdvancedVideoViewBase {
             q = quality;
         }
         switch (q) {
-            case Quality.MAX_720P.toString():
+            case Quality.MAX_720P:
                 this.nativeView.setQuality(
-                    co.fitcom.fancycamera.FancyCamera.Quality.MAX_720P.getValue()
+                    co.fitcom.fancycamera.FancyCamera.Quality.Companion.from(1)
                 );
                 break;
-            case Quality.MAX_1080P.toString():
+            case Quality.MAX_1080P:
                 this.nativeView.setQuality(
-                    co.fitcom.fancycamera.FancyCamera.Quality.MAX_1080P.getValue()
+                    co.fitcom.fancycamera.FancyCamera.Quality.Companion.from(2)
                 );
                 break;
-            case Quality.MAX_2160P.toString():
+            case Quality.MAX_2160P:
                 this.nativeView.setQuality(
-                    co.fitcom.fancycamera.FancyCamera.Quality.MAX_2160P.getValue()
+                    co.fitcom.fancycamera.FancyCamera.Quality.Companion.from(3)
                 );
                 break;
-            case Quality.HIGHEST.toString():
+            case Quality.HIGHEST:
                 this.nativeView.setQuality(
-                    co.fitcom.fancycamera.FancyCamera.Quality.HIGHEST.getValue()
+                    co.fitcom.fancycamera.FancyCamera.Quality.Companion.from(4)
                 );
                 break;
-            case Quality.LOWEST.toString():
+            case Quality.LOWEST:
                 this.nativeView.setQuality(
-                    co.fitcom.fancycamera.FancyCamera.Quality.LOWEST.getValue()
+                    co.fitcom.fancycamera.FancyCamera.Quality.Companion.from(5)
                 );
                 break;
-            case Quality.QVGA.toString():
+            case Quality.QVGA:
                 this.nativeView.setQuality(
-                    co.fitcom.fancycamera.FancyCamera.Quality.QVGA.getValue()
+                    co.fitcom.fancycamera.FancyCamera.Quality.Companion.from(6)
                 );
                 break;
             default:
                 this.nativeView.setQuality(
-                    co.fitcom.fancycamera.FancyCamera.Quality.MAX_480P.getValue()
+                    co.fitcom.fancycamera.FancyCamera.Quality.Companion.from(0)
                 );
                 break;
         }
@@ -280,12 +260,11 @@ export class AdvancedVideoView extends AdvancedVideoViewBase {
     }
 
     public get isTorchAvailable() {
-        return false; // this.nativeView && this.nativeView.hasFlash();
+        return this.nativeView && this.nativeView.hasFlash();
     }
 
     public toggleTorch() {
         if (!this.isTorchAvailable) return;
-        console.log('toggleFlash is called', this.torch);
         this.torch = !this.torch;
     }
 
@@ -315,7 +294,6 @@ export class AdvancedVideoView extends AdvancedVideoViewBase {
 
     extractThumbnails(file) {
         this.thumbnails = [];
-        console.log("file", file);
         let mediaMetadataRetriever = new MediaMetadataRetriever();
 
         mediaMetadataRetriever.setDataSource(file);
@@ -338,10 +316,10 @@ export class AdvancedVideoView extends AdvancedVideoViewBase {
             let quality = 100;
 
             let outputFilePath =
-                file.substr(0, file.lastIndexOf(".")) +
-                "_thumbnail_" +
+                file.substr(0, file.lastIndexOf('.')) +
+                '_thumbnail_' +
                 index +
-                ".png";
+                '.png';
             let outputFile = new java.io.File(outputFilePath);
             let outputStream = null;
 
@@ -350,27 +328,42 @@ export class AdvancedVideoView extends AdvancedVideoViewBase {
             } catch (e) {
                 console.log(e);
             }
-
-            let bmpScaledSize = android.graphics.Bitmap.createScaledBitmap(
-                bmpOriginal,
-                bmpOriginal.getWidth(),
-                bmpOriginal.getHeight(),
-                false
-            );
-            bmpScaledSize.compress(
-                android.graphics.Bitmap.CompressFormat.PNG,
-                quality,
-                outputStream
-            );
-
+            let bmpScaledSize;
             try {
-                outputStream.close();
+                bmpScaledSize = android.graphics.Bitmap.createScaledBitmap(
+                    bmpOriginal,
+                    bmpOriginal.getWidth(),
+                    bmpOriginal.getHeight(),
+                    false
+                );
+                bmpScaledSize.compress(
+                    android.graphics.Bitmap.CompressFormat.PNG,
+                    quality,
+                    outputStream
+                );
+
+                if (outputStream) {
+                    outputStream.close();
+                }
                 this.thumbnails.push(outputFilePath);
             } catch (e) {
                 console.log(e);
+            } finally {
+                outputStream = null;
+                if (bmpScaledSize) {
+                    releaseNativeObject(bmpScaledSize);
+                }
+                if (bmpOriginal) {
+                    releaseNativeObject(bmpOriginal);
+                }
+                releaseNativeObject(tmpByteBuffer);
             }
         }
 
         mediaMetadataRetriever.release();
     }
 }
+
+export const TNSCameraProvider = (co as any).fitcom.fancycamera.CameraProvider;
+export const TNSCamera = (co as any).fitcom.fancycamera.FancyCamera;
+

@@ -6,7 +6,7 @@ export declare enum NativeOrientation {
     Portrait = 1,
     PortraitUpsideDown = 2,
     LandscapeLeft = 3,
-    LandscapeRight = 4,
+    LandscapeRight = 4
 }
 export declare class AdvancedVideoView extends AdvancedVideoViewBase {
     thumbnails: any[];
@@ -14,14 +14,15 @@ export declare class AdvancedVideoView extends AdvancedVideoViewBase {
     static requestPermissions(explanation?: string): Promise<any>;
     private durationInterval;
     static isAvailable(): any;
-    createNativeView(): co.fitcom.fancycamera.FancyCamera;
+    private _view;
+    createNativeView(): any;
+    private _handlePermission;
     initNativeView(): void;
-    onLoaded(): void;
-    onUnloaded(): void;
-    private setCameraPosition(position);
-    private setCameraOrientation(orientation);
-    private setQuality(quality);
-    readonly isTorchAvailable: boolean;
+    disposeNativeView(): void;
+    private setCameraPosition;
+    private setCameraOrientation;
+    private setQuality;
+    readonly isTorchAvailable: any;
     toggleTorch(): void;
     toggleCamera(): void;
     startRecording(): void;
@@ -30,3 +31,5 @@ export declare class AdvancedVideoView extends AdvancedVideoViewBase {
     stopPreview(): void;
     extractThumbnails(file: any): void;
 }
+export declare const TNSCameraProvider: any;
+export declare const TNSCamera: any;

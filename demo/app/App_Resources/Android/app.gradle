@@ -6,9 +6,8 @@
 //}
 
 android {  
-  defaultConfig {  
+  defaultConfig {
     generatedDensities = []
-    applicationId = "co.fitcom.nativescript.demo"  
   }  
   aaptOptions {  
     additionalParameters "--no-version-vectors"  

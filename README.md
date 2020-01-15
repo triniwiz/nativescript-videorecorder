@@ -57,12 +57,12 @@ Option object can be given to the constructor of `VideoRecorder` or as `VideoRec
 * **duration?: number** - Limit the duration of the video, 0 for unlimited (default: `0`)
 * **position?: 'front' | 'back' | 'none'** - Force which device camera should be used, `'none'` for no preferences (default: `none`)
 
-Additionnal parameters for Android:
+Additional parameters for Android:
 
 * **size?: number** - Limit the size of the video, 0 for unlimited (default: `0`)
 * **explanation?: string** - Why permissions should be accepted, optional on api > 23
 
-Additionnal parameters for iOS:
+Additional parameters for iOS:
 
 * **format?: 'default' | 'mp4'** - allows videos to be played on android devices (default: `'default'`) recommended for cross platform apps
 
@@ -87,7 +87,9 @@ Promises above can be rejected with:
 
 AdvancedVideoView does not open the device camera application, but rather allows you to embed the camera view in your app. You can then add buttons over it to start/stop recording. It allows for a deeper level of UI customization.
 
-```xml
+**Requires API 21+ on Android 🤖**
+
+```html
 <Page xmlns="http://schemas.nativescript.org/tns.xsd" xmlns:recorder="nativescript-videorecorder/advanced">
 <recorder:AdvancedVideoView quality="highest" cameraPosition="front" id="camera"/>
 ```
